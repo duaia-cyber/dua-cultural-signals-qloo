@@ -1,5 +1,5 @@
-import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext } from './workflow.mjs?v=clear-plan-2';
-import { downloadBriefPdf } from './pdf-export.mjs?v=clear-plan-2';
+import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext, researchStages, selectionInsight } from './workflow.mjs?v=decision-6';
+import { downloadBriefPdf } from './pdf-export.mjs?v=decision-6';
 
 const $ = selector => document.querySelector(selector);
 const state = { selected: null, second: null, brief: null, mode: 'single', shortlist: new Map() };
@@ -133,6 +133,12 @@ function renderItems(container, items, category, provenance, emptyText, scope = 
       else state.shortlist.set(key, { ...item, category, provenance, scope });
       updateShortlist();
     });
+    const insight = selectionInsight(category, scope);
+    const why = document.createElement('details'); why.className = 'reference-why';
+    const summary = document.createElement('summary'); summary.textContent = 'Source & creative use';
+    const source = document.createElement('p'); source.textContent = provenance + '. ' + insight.evidence;
+    const prompt = document.createElement('p'); prompt.textContent = 'Explore: ' + insight.prompt;
+    why.append(summary, source, prompt); content.append(why);
     add.dataset.entity = key; add.dataset.name = item.name; row.append(number, content, add); container.append(row);
   });
 }
@@ -182,6 +188,8 @@ async function buildResearchBrief() {
     state.brief = data; state.mode = isBridge ? 'bridge' : 'single'; state.shortlist.clear();
     if (isBridge) renderBridge(data); else renderSingle(data);
     updateShortlist();
+    const stages = $('#research-steps'); stages.replaceChildren();
+    researchStages(data, state.mode).forEach((label, i) => { const step = document.createElement('li'); step.textContent = String(i + 1).padStart(2, '0') + ' · ' + label; stages.append(step); });
     const list = $('#actions'); list.replaceChildren();
     for (const action of data.actions) { const li = document.createElement('li'); li.textContent = action; list.append(li); }
     searchStatus.textContent = ''; results.hidden = false;
@@ -242,13 +250,14 @@ function updateShortlist() {
   $('#dock-count').textContent = count ? count + (count === 1 ? ' reference selected' : ' references selected') : 'Choose your references';
   $('#dock-hint').textContent = count ? 'Add your context, review the plan and export your PDF.' : 'Use + to keep the ideas you want to explore.';
   $('#review-brief').disabled = !count;
+  updateContextPreview();
   $('#copy-status').textContent = '';
   const outline = $('#creative-outline'); outline.replaceChildren();
   for (const line of createOutline(state.brief, state.mode, [...state.shortlist.values()])) { const li = document.createElement('li'); li.textContent = line; outline.append(li); }
 }
 
 function briefText() {
-  return createBriefText(state.brief, state.mode, [...state.shortlist.values()], projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value));
+  return createBriefText(state.brief, state.mode, [...state.shortlist.values()], exportContext());
 }
 
 $('#copy').addEventListener('click', async () => {
@@ -267,7 +276,7 @@ $('#download-pdf').addEventListener('click', async () => {
   const button = $('#download-pdf');
   button.disabled = true; $('#copy-status').textContent = 'Preparing your PDF…';
   try {
-    await downloadBriefPdf({ brief: state.brief, mode: state.mode, selected: [...state.shortlist.values()], note: projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value) });
+    await downloadBriefPdf({ brief: state.brief, mode: state.mode, selected: [...state.shortlist.values()], note: exportContext() });
     $('#copy-status').textContent = 'PDF download started. Your note stayed in this browser.';
   } catch {
     $('#copy-status').textContent = 'PDF could not be created. Please try again or use the Markdown export.';
@@ -286,3 +295,15 @@ $('#review-brief').addEventListener('click', () => {
   brief.focus({ preventScroll: true });
   brief.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
 });
+
+function exportContext() {
+  const context = projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value);
+  const reason = $('#selection-reason').value.trim();
+  return [context, reason ? 'Creative rationale (written by you): ' + reason : ''].filter(Boolean).join('\n\n');
+}
+function updateContextPreview() {
+  $('#context-preview').textContent = projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value) || 'Add a project, audience or practical limit to make this brief yours.';
+}
+for (const id of ['project-note', 'project-audience', 'project-place', 'project-constraint']) $('#' + id).addEventListener('input', updateContextPreview);
+
+$('.edit-context').addEventListener('click', () => { $('#project-context').open = true; });

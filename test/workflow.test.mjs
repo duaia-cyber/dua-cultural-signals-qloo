@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findExactArtist, communitySearchUrl, createOutline, createBriefText, projectSteps, projectContext } from '../public/workflow.mjs';
+import { findExactArtist, communitySearchUrl, createOutline, createBriefText, projectSteps, projectContext, researchStages, selectionInsight } from '../public/workflow.mjs';
 
 test('example requires one exact, unambiguous identity and never guesses another artist', () => {
   const one = { id: 'abc', name: 'Cesária Évora' };
@@ -67,3 +67,16 @@ test('single-reference export is honest when the user selected nothing', () => {
  const brief = {reference:'Artist', goal:'campaign', source:'Sample', actions:[], artists:[], films:[]};
  assert.ok(createBriefText(brief, 'single', [], note).includes(note));
  });
+
+
+test('research outcomes distinguish unavailable exploration from an empty sample', () => {
+  assert.match(researchStages({ exploration: {status: 'unavailable'} }, 'bridge')[2], /unavailable/);
+  assert.match(researchStages({ exploration: {status: 'not_found'} }, 'bridge')[2], /no shared result/);
+  assert.equal(researchStages({}, 'bridge')[2], 'Review returned references');
+  assert.equal(researchStages({artists:{common:[{}]}}, 'bridge')[2], 'Shared references found');
+});
+test('creative prompts remain separate from shared evidence and never imply bookings', () => {
+  assert.match(selectionInsight('films','common').evidence, /both/);
+  assert.match(selectionInsight('artists','onlyA').prompt, /not a booking/);
+  assert.match(selectionInsight('films','onlyB').prompt, /Verify/);
+});

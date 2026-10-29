@@ -1,4 +1,4 @@
-import { createOutline, describeExploration } from './workflow.mjs?v=clear-plan-2';
+import { createOutline, describeExploration } from './workflow.mjs?v=decision-6';
 
 const COLOURS = { ink: [19, 20, 25], paper: [247, 246, 242], blue: [38, 75, 193], muted: [93, 98, 111], first: [126, 143, 174], second: [202, 209, 221], white: [255, 255, 255] };
 

@@ -100,3 +100,22 @@ export function projectContext(note, audience, place, constraint) {
     .filter(([, value]) => String(value || '').trim())
     .map(([label, value]) => (label ? label + ': ' : '') + String(value).trim()).join('\n');
 }
+
+// Outcomes describe completed calls only. No simulated progress or reasoning.
+export function researchStages(brief, mode) {
+  const stages = ['Identities verified', 'Music & film compared'];
+  if (mode !== 'bridge') return ['Identity verified', 'Music & film explored', 'Choose your direction'];
+  const status = brief.exploration?.status;
+  if (status === 'found') stages.push('Additional path found');
+  else if (status === 'not_found') stages.push('Extra search: no shared result');
+  else if (status === 'unavailable') stages.push('Extra search unavailable');
+  else if (status === 'no_candidate') stages.push('No extra candidate returned');
+  else stages.push((brief.artists?.common?.length || brief.films?.common?.length) ? 'Shared references found' : 'Review returned references');
+  return stages;
+}
+
+export function selectionInsight(category, scope) {
+  const evidence = scope === 'common' ? 'Returned for both references in this sample.' : 'Returned for this reference; not proof of a personal connection.';
+  const prompt = category === 'films' ? 'Explore a visual mood, narrative or staging idea. Verify the work before using it.' : 'Listen for a musical direction to discuss with your team. This is not a booking recommendation.';
+  return { evidence, prompt };
+}
