@@ -1,4 +1,4 @@
-import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext, researchStages, selectionInsight } from './workflow.mjs?v=decision-6';
+import { findExactArtist, createOutline, describeExploration, createBriefText, projectContext, researchStages, selectionInsight } from './workflow.mjs?v=selection-7';
 import { downloadBriefPdf } from './pdf-export.mjs?v=decision-6';
 
 const $ = selector => document.querySelector(selector);
@@ -229,16 +229,22 @@ $('#try-example').addEventListener('click', async () => {
 function updateShortlist() {
   const list = $('#shortlist'); list.replaceChildren();
   for (const [key, item] of state.shortlist) {
-    const li = document.createElement('li'); const label = document.createElement('span');
-    label.textContent = item.name + ' · ' + item.category + ' · ' + item.provenance;
-    const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
+    const li = document.createElement('li');
+    const label = document.createElement('div'); label.className = 'shortlist-label';
+    const name = document.createElement('strong'); name.textContent = item.name;
+    const source = document.createElement('span');
+    source.textContent = (item.category === 'artists' ? 'Artist' : 'Film') + ' · ' + item.provenance;
+    label.append(name, source);
+    const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'shortlist-remove'; remove.textContent = 'Remove';
     remove.setAttribute('aria-label', 'Remove ' + item.name + ' from brief');
-    remove.addEventListener('click', () => { state.shortlist.delete(key); updateShortlist(); });
-    const search = document.createElement('a'); search.href = communitySearchUrl(item.name); search.target = '_blank'; search.rel = 'noopener noreferrer';
-    search.textContent = 'Search Community'; search.className = 'community-search';
-    search.setAttribute('aria-label', 'Search DUA Community for ' + item.name);
-    const controls = document.createElement('div'); controls.className = 'shortlist-controls'; controls.append(search, remove);
-    li.append(label, controls); list.append(li);
+    remove.addEventListener('click', () => {
+      const index = [...state.shortlist.keys()].indexOf(key);
+      state.shortlist.delete(key); updateShortlist();
+      const remaining = list.querySelectorAll('.shortlist-remove');
+      const focusTarget = remaining[Math.min(index, remaining.length - 1)] || $('#curation-title');
+      focusTarget.focus({ preventScroll: true });
+    });
+    li.append(label, remove); list.append(li);
   }
   $('#shortlist-count').textContent = state.shortlist.size ? state.shortlist.size + (state.shortlist.size === 1 ? ' reference selected for your brief.' : ' references selected for your brief.') : 'No references selected yet. Use + beside any result.';
   for (const button of document.querySelectorAll('[data-entity]')) {

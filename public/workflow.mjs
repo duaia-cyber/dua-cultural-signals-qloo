@@ -8,13 +8,6 @@ export function findExactArtist(items, name) {
   return unique.size === 1 ? [...unique.values()][0] : null;
 }
 
-export function communitySearchUrl(name) {
-  const url = new URL('https://dua.2lados.pt/feed');
-  url.searchParams.set('tab', 'discover');
-  url.searchParams.set('q', String(name).trim().slice(0, 120));
-  return url.toString();
-}
-
 export function createOutline(brief, mode, selected) {
   if (!brief) return [];
   const goal = { showcase: 'live showcase', collaboration: 'creative collaboration', campaign: 'cultural campaign' }[brief.goal] || 'creative project';

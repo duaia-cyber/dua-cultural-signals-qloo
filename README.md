@@ -4,13 +4,13 @@ A human-guided research tool built for the Qloo Agentic Hackathon. A cultural pr
 
 [Live demo](https://dua-cultural-signals-qloo.vercel.app) · [Machine-readable OpenAPI tool specification](https://dua-cultural-signals-qloo.vercel.app/openapi.json) · [DUA creative ecosystem](https://dua.2lados.pt/) · [DUA Community](https://dua.2lados.pt/feed) · [DUA Radar](https://dua.2lados.pt/radar-cultural)
 
-This is a standalone open-source hackathon prototype inspired by the DUA ecosystem. It links to the real DUA Community, where people can browse creators and explore the community separately. After selecting a public reference, the user may choose to search the Community for that name; only that name is sent as a search query on click. The tool does not automatically match Qloo entities to DUA profiles or guarantee a result. It does not log users into DUA, access DUA community data, or represent a feature already integrated into the main platform.
+This is a standalone open-source hackathon prototype inspired by the DUA ecosystem. It links to the real DUA Community, where people can browse creators and explore the community separately. Qloo references are research inspiration, not verified DUA profiles; the link does not search for selected artists. The tool does not log users into DUA, access DUA community data, or represent a feature already integrated into the main platform.
 
 ## Judge walkthrough
 
-1. Select **Try a live example** to verify and compare Cesária Évora and Ibrahim Ferrer in one step. Alternatively, search for and select both identities manually, choose **A live showcase**, and select **Build research brief**.
+1. Select **Try a live example** to verify and compare Lura and Mayra Andrade in one step. Alternatively, search for and select both identities manually, choose **Live event**, and select **Build research brief**.
 2. Review the direct connection and matching Qloo entities; select references with + and add a project note. The working outline uses only your selections.
-3. Download the editorial PDF, including charts based on the returned samples, copy the brief or download Markdown. You can also explicitly search for a selected reference in the Community.
+3. Download the editorial PDF, including charts based on the returned samples, copy the brief or download Markdown. Open the Community separately if you want to discover creators.
 4. Optional: disable the comparison to explore a single reference instead; choose another pair to try a case with no overlap.
 
 Qloo responses change. The walkthrough is not a promise that any particular result will always appear.
