@@ -269,3 +269,10 @@ $('#download-pdf').addEventListener('click', async () => {
     $('#copy-status').textContent = 'PDF could not be created. Please try again or use the Markdown export.';
   } finally { button.disabled = false; }
 });
+
+// Portraits are optional; captions remain useful if the external image is unavailable.
+for (const portrait of document.querySelectorAll('.artist-preview img')) {
+  const hideUnavailable = () => { portrait.hidden = true; };
+  portrait.addEventListener('error', hideUnavailable);
+  if (portrait.complete && !portrait.naturalWidth) hideUnavailable();
+}

@@ -44,3 +44,8 @@ The creator chooses a showcase, collaboration or campaign. After curating refere
 
 ### Demo reference selection
 The default pair is Lura / Mayra Andrade. Known historical names previously encountered are omitted before display through an explicit editorial exclusion list in `lib/qloo.mjs`. This list is not an exhaustive life-status registry: Qloo's normalized response does not verify whether every returned person is alive or available. Results remain cultural references, never verified hiring candidates.
+
+### Example photographs (separate from the MIT code license)
+- Lura, Cosmopolite, 22 April 2017: Photo: Tore Sætre / Wikimedia, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Lura_Cosmopolite_(221240).jpg
+- Mayra Andrade, Central Park, 21 June 2009: Irn / Wikimedia, CC BY 3.0. https://commons.wikimedia.org/wiki/File:Mayra_Andrade.jpg
+Unmodified image copies are served locally from Wikimedia sources, displayed proportionally without cropping or modification; source and license links appear beside them. They identify the example references and do not imply endorsement. Other artists have no guessed or generated portraits.
