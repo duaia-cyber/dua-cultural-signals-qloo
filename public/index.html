@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore a creative brief through cultural reference points.">
+  <title>DUA Cultural Signals</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" type="module"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="/" aria-label="DUA Cultural Signals home">DUA <span>by 2 LADOS</span></a>
+    <p>CULTURAL SIGNALS <span> / </span> EXPERIMENT 01</p>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span> A TOOL FOR CREATIVE CONNECTION</p>
+        <h1>Culture has no <em>single</em> address.</h1>
+        <p class="intro">Start with one artist. Follow the cultural connections. Make the next creative move with more context.</p>
+        <div class="hero-rule"><span>MADE FOR PEOPLE WHO MAKE CULTURE</span><b>01 — 03</b></div>
+        <p class="footnote">An independent experiment inspired by the Lusophone creative community. Recommendations are cultural signals, not proof of representation or demand.</p>
+      </div>
+      <section class="panel" aria-labelledby="start-title">
+        <div class="panel-top"><span>THE STARTING POINT</span><span>01</span></div>
+        <h2 id="start-title">Find a reference.</h2>
+        <p>Choose an artist whose work is relevant to your project. We'll ask you to confirm the match before exploring.</p>
+        <form id="search-form">
+          <label for="artist">ARTIST NAME</label>
+          <div class="input-row"><input id="artist" name="artist" type="text" minlength="2" maxlength="100" placeholder="e.g. Cesária Évora" required autocomplete="off"><button id="search-button" type="submit">Find artist <span aria-hidden="true">↗</span></button></div>
+        </form>
+        <p class="privacy">Names entered here are sent to Qloo for search. Please don't enter private or sensitive information.</p>
+        <div id="search-status" class="status" aria-live="polite"></div>
+        <div id="matches" class="matches" aria-label="Search results"></div>
+        <div id="selection" class="selection" hidden>
+          <label for="goal">WHAT ARE YOU WORKING ON?</label>
+          <select id="goal"><option value="showcase">A live showcase</option><option value="collaboration">A creative collaboration</option><option value="campaign">A cultural campaign</option></select>
+          <button id="build" class="build" type="button">Explore connections <span aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+    </section>
+    <section id="results" class="results" hidden aria-labelledby="results-title">
+      <div class="section-heading"><div><p class="eyebrow"><span class="dot"></span> A STARTING POINT FOR YOUR PROJECT</p><h2 id="results-title">A world around <em id="reference-name"></em></h2></div><p id="result-source"></p></div>
+      <div id="result-status" class="status" aria-live="polite"></div>
+      <div class="result-grid">
+        <section class="result-column"><div class="column-title"><span>01 / ARTISTS</span><span>RELATED SIGNALS</span></div><div id="artists"></div></section>
+        <section class="result-column"><div class="column-title"><span>02 / FILM</span><span>CROSS-MEDIA SIGNALS</span></div><div id="films"></div></section>
+      </div>
+      <section class="brief"><div><p class="eyebrow">03 / YOUR NEXT MOVE</p><h3>Make the connection <em>human.</em></h3></div><div><ol id="actions"></ol><button id="copy" type="button">Copy this brief ↗</button><p id="copy-status" aria-live="polite"></p></div></section>
+    </section>
+    <section class="method"><p>THE METHOD</p><p>Qloo maps cultural affinity. You bring the lived experience, the relationships and the decisions.</p><span>DUA / CULTURAL SIGNALS</span></section>
+  </main>
+  <footer><span>2 LADOS / DUA</span><span>PROTOTYPE · NOT CONNECTED TO DUA ACCOUNTS</span><span>POWERED BY QLOO WHEN CONFIGURED</span></footer>
+</body>
+</html>
