@@ -150,3 +150,37 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14
 .export-actions button:first-child{background:#1744cd;border-color:#1744cd;}
 @media(max-width:800px){.hero{gap:30px;padding:32px 20px 40px;}.hero-copy{padding-top:0;}.workflow{max-width:none;}.curation{grid-template-columns:minmax(0,1fr);gap:10px;}.panel h2{font-size:29px;}.results{padding:22px;}.result-column{padding:16px;}}
 @media(max-width:430px){.topbar{gap:12px;}.prototype-label{max-width:110px;font-size:9px;text-align:center;}.entry{grid-template-columns:18px minmax(0,1fr) 44px;gap:7px;}.hero h1{font-size:41px;}.results{padding:18px;}.brief{padding:20px;}.evidence-strip{gap:10px;font-size:11px;}}
+
+/* Cultural bridge: provenance is part of the interface, not a hidden score. */
+.panel label.bridge-toggle {display:flex;align-items:flex-start;gap:12px;margin:0 0 18px;padding:15px;border:1px solid #39425f;border-radius:16px;background:#192037;font-size:13px;line-height:1.4;letter-spacing:0;cursor:pointer;}
+.bridge-toggle input {width:20px;height:20px;flex:none;margin:1px 0 0;accent-color:#668aff;}
+.bridge-toggle span {color:#fff;}
+.bridge-toggle small {display:block;margin-top:4px;color:#c0c8df;font-size:11px;font-weight:400;}
+.bridge-box {padding:0 0 25px;}
+.bridge-box .matches {margin-bottom:0;}
+.bridge-summary {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;margin-bottom:24px;padding:28px;border-radius:20px;background:#dce4fb;}
+.bridge-summary .eyebrow {margin:0 0 10px;color:#334675;}
+.bridge-summary h3,.source-intro h3 {margin:0;font-size:clamp(24px,2.5vw,34px);line-height:1.1;letter-spacing:-.045em;}
+.bridge-summary p:not(.eyebrow) {margin:0 0 10px;color:#263a69;font-size:14px;line-height:1.6;}
+.bridge-summary p.bridge-limit {margin:12px 0 0;color:#52617d;font-size:12px;}
+.shared-grid {margin-bottom:34px;}
+.source-intro {margin:0 0 20px;}
+.source-intro .eyebrow {margin-bottom:10px;color:#68686b;}
+.source-intro p:not(.eyebrow) {color:#64646a;font-size:12px;line-height:1.6;}
+.source-grid .column-title span:first-child {overflow-wrap:anywhere;color:#233e9b;}
+.source-grid h4 {margin:22px 0 0;color:#68686b;font-size:10px;letter-spacing:.12em;text-transform:uppercase;}
+.source-grid .empty,.shared-grid .empty {padding-top:16px;}
+.ecosystem {display:flex;align-items:end;justify-content:space-between;gap:30px;margin:0 48px 55px;padding:32px;border:1px solid var(--line);border-radius:22px;background:#111216;}
+.ecosystem h2 {margin:0;font-size:clamp(24px,3vw,34px);letter-spacing:-.045em;}
+.ecosystem p:not(.eyebrow) {max-width:620px;margin:14px 0 0;color:#bcbcc2;font-size:13px;line-height:1.65;}
+.ecosystem .eyebrow {margin-bottom:12px;}
+.ecosystem a {display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:0 20px;border:1px solid #777b87;border-radius:999px;color:#fff;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;}
+.ecosystem a:hover {background:#292b31;}
+.ecosystem-links {display:flex;flex-wrap:wrap;gap:8px;}
+.note-label {display:block;margin-top:24px;color:#d4d6df;font-size:10px;font-weight:700;letter-spacing:.11em;}
+.note-label span {color:#aaaeb9;font-weight:400;}
+.brief textarea {display:block;width:100%;min-height:82px;margin-top:9px;padding:12px 14px;border:1px solid #494c55;border-radius:13px;background:#191a1e;color:#fff;font:inherit;font-size:13px;line-height:1.5;resize:vertical;}
+.brief textarea::placeholder {color:#a7a9b1;opacity:1;}
+.brief .note-help {max-width:320px;color:#aaadb7;font-size:11px;line-height:1.5;}
+@media(max-width:800px){.bridge-summary{grid-template-columns:minmax(0,1fr);gap:14px;padding:22px;}.ecosystem{display:block;margin:0 20px 40px;padding:24px;}.ecosystem-links{margin-top:20px;}}
+@media(max-width:430px){.bridge-summary{padding:18px;}.column-title{font-size:9px;}.panel label.bridge-toggle{padding:12px;}.ecosystem{margin:0 12px 30px;}}

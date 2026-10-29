@@ -18,15 +18,15 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow"><span class="dot"></span> DUA / CULTURAL SIGNALS</p>
-        <h1 id="hero-title">From cultural taste<br>to a creative brief.</h1>
-        <p class="intro">A research workspace for cultural programmers and independent creators. Connect music and film, curate your references, and leave with a brief you can use.</p>
-        <ol class="workflow" aria-label="Research workflow"><li><span>01</span> Find your reference</li><li><span>02</span> Explore connections</li><li><span>03</span> Curate your brief</li></ol>
+        <h1 id="hero-title">Build a bridge<br>between cultures.</h1>
+        <p class="intro">Start with two artists. Discover the music and films connecting their creative worlds, then curate a brief for your next event, collaboration or campaign.</p>
+        <ol class="workflow" aria-label="Research workflow"><li><span>01</span> Choose two references</li><li><span>02</span> Explore the connection</li><li><span>03</span> Curate your brief</li></ol>
         <p class="footnote">Built from a Lusophone creative perspective. Open to cultural discovery everywhere.</p>
       </div>
       <section class="panel" aria-labelledby="start-title">
         <div class="panel-top"><span>DISCOVER</span><span>DUA / QLOO</span></div>
         <h2 id="start-title">Where does your idea begin?</h2>
-        <p>Search for an artist. You choose the right match; Qloo supplies the cultural connections.</p>
+        <p>Choose the right artists. Qloo supplies the cultural references; you decide what they mean for your project.</p>
         <form id="search-form">
           <label for="artist">ARTIST NAME</label>
           <div class="input-row"><input id="artist" name="artist" type="text" minlength="2" maxlength="100" placeholder="e.g. Cesária Évora" required autocomplete="off"><button id="search-button" type="submit">Search <span aria-hidden="true">↗</span></button></div>
@@ -35,6 +35,13 @@
         <div id="search-status" class="status" aria-live="polite"></div>
         <div id="matches" class="matches" aria-label="Search results"></div>
         <div id="selection" class="selection" hidden>
+          <label class="bridge-toggle" for="bridge-toggle"><input type="checkbox" id="bridge-toggle" checked><span>Compare with a second artist <small>Find shared references and direct connections</small></span></label>
+          <div id="bridge-box" class="bridge-box">
+            <label for="artist2">SECOND ARTIST NAME</label>
+            <div class="input-row"><input id="artist2" type="text" minlength="2" maxlength="100" placeholder="e.g. Ibrahim Ferrer" autocomplete="off" required><button id="search2" type="button">Search <span aria-hidden="true">↗</span></button></div>
+            <div id="search-status2" class="status" aria-live="polite"></div>
+            <div id="matches2" class="matches" aria-label="Second artist search results"></div>
+          </div>
           <label for="goal">WHAT ARE YOU WORKING ON?</label>
           <select id="goal"><option value="showcase">A live showcase</option><option value="collaboration">A creative collaboration</option><option value="campaign">A cultural campaign</option></select>
           <button id="build" class="build" type="button">Build research brief <span aria-hidden="true">↗</span></button>
@@ -44,15 +51,31 @@
     <section id="results" class="results" hidden aria-labelledby="results-title">
       <div class="section-heading"><div><p class="eyebrow"><span class="dot"></span> YOUR DISCOVERY</p><h2 id="results-title">References around <em id="reference-name"></em></h2></div><p id="result-source"></p></div>
       <div id="result-status" class="status" aria-live="polite"></div>
-      <div class="evidence-strip" aria-label="Completed research steps"><span>✓ Artist identity verified</span><span>✓ Music &amp; film queried</span><span>Human curation is next</span></div><p class="result-hint">Add the references you want to investigate. Affinity signals do not establish availability, rights or audience demand.</p><div class="result-grid">
+      <div class="evidence-strip" aria-label="Completed research steps"><span>✓ Artist identity verified</span><span>✓ Music &amp; film queried</span><span>Human curation is next</span></div><p class="result-hint">Add the references you want to investigate. Affinity signals do not establish availability, rights or audience demand.</p><div id="single-view" class="result-grid">
         <section class="result-column"><div class="column-title"><span>ARTISTS</span><span>RELATED SIGNALS</span></div><div id="artists"></div></section>
         <section class="result-column"><div class="column-title"><span>FILM</span><span>CROSS-MEDIA SIGNALS</span></div><div id="films"></div></section>
       </div>
-      <section class="curation" aria-labelledby="curation-title"><div><p class="eyebrow">YOUR SELECTION</p><h3 id="curation-title">A focused starting point.</h3><p id="shortlist-count" aria-live="polite">No references selected yet.</p></div><ul id="shortlist"></ul></section><section class="brief"><div><p class="eyebrow">YOUR NEXT MOVE</p><h3>Turn references<br>into a next step.</h3></div><div><ol id="actions"></ol><div class="export-actions"><button id="copy" type="button">Copy brief <span aria-hidden="true">↗</span></button><button id="download" type="button">Download .md <span aria-hidden="true">↓</span></button></div><p id="copy-status" aria-live="polite"></p></div></section>
+      <div id="bridge-view" hidden>
+        <section class="bridge-summary" aria-labelledby="bridge-heading">
+          <div><p class="eyebrow">THE CONNECTION</p><h3 id="bridge-heading">Where the references meet.</h3></div>
+          <div><p id="bridge-direct"></p><p id="bridge-common-status"></p><p class="bridge-limit">Based only on the returned sample — not a measure of audience overlap. No shared result does not mean no connection exists.</p></div>
+        </section>
+        <div class="result-grid shared-grid">
+          <section class="result-column"><div class="column-title"><span>COMMON ARTISTS</span><span>BOTH RESULTS</span></div><div id="common-artists"></div></section>
+          <section class="result-column"><div class="column-title"><span>COMMON FILMS</span><span>BOTH RESULTS</span></div><div id="common-films"></div></section>
+        </div>
+        <div class="source-intro"><p class="eyebrow">EXPLORE EACH WORLD</p><h3>Different paths. More possibilities.</h3><p>These appear in one returned sample, but not the other. Results are limited and may change.</p></div>
+        <div class="result-grid source-grid">
+          <section class="result-column"><div class="column-title"><span id="source-a-name"></span><span>FIRST REFERENCE</span></div><h4>Artists</h4><div id="only-a-artists"></div><h4>Films</h4><div id="only-a-films"></div></section>
+          <section class="result-column"><div class="column-title"><span id="source-b-name"></span><span>SECOND REFERENCE</span></div><h4>Artists</h4><div id="only-b-artists"></div><h4>Films</h4><div id="only-b-films"></div></section>
+        </div>
+      </div>
+      <section class="curation" aria-labelledby="curation-title"><div><p class="eyebrow">YOUR SELECTION</p><h3 id="curation-title">A focused starting point.</h3><p id="shortlist-count" aria-live="polite">No references selected yet.</p></div><ul id="shortlist"></ul></section><section class="brief"><div><p class="eyebrow">YOUR NEXT MOVE</p><h3>Turn references<br>into a next step.</h3><label class="note-label" for="project-note">YOUR PROJECT NOTE <span>OPTIONAL</span></label><textarea id="project-note" rows="3" maxlength="240" placeholder="e.g. A Lusophone music and film showcase in Lisbon"></textarea><p class="note-help">Your note stays in this browser and is included only in your exported brief.</p></div><div><ol id="actions"></ol><div class="export-actions"><button id="copy" type="button">Copy brief <span aria-hidden="true">↗</span></button><button id="download" type="button">Download .md <span aria-hidden="true">↓</span></button></div><p id="copy-status" aria-live="polite"></p></div></section>
     </section>
     <section class="method" aria-label="How the tool helps">
       <p>THE METHOD</p><p>Qloo maps cultural affinity. You bring the lived experience, the relationships and the decisions.</p><span>DUA / CULTURAL SIGNALS</span>
     </section>
+    <section class="ecosystem" aria-labelledby="ecosystem-heading"><div><p class="eyebrow"><span class="dot"></span> BEYOND THE PROTOTYPE</p><h2 id="ecosystem-heading">Built from the DUA ecosystem.</h2><p>Explore the existing DUA platform: community, creative tools, opportunities and Market. Cultural Signals is a separate hackathon prototype and is not connected to DUA accounts.</p></div><div class="ecosystem-links"><a href="https://dua.2lados.pt/radar-cultural" target="_blank" rel="noopener noreferrer">Explore the Radar <span aria-hidden="true">↗</span></a><a href="https://dua.2lados.pt/" target="_blank" rel="noopener noreferrer">Explore DUA <span aria-hidden="true">↗</span></a></div></section>
   </main>
   <footer><span>2 LADOS / DUA</span><span>PROTOTYPE · NOT CONNECTED TO DUA ACCOUNTS</span><span>QLOO CULTURAL INTELLIGENCE</span></footer>
 </body>
