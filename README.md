@@ -48,4 +48,4 @@ The default pair is Lura / Mayra Andrade. Known historical names previously enco
 ### Example photographs (separate from the MIT code license)
 - Lura, Cosmopolite, 22 April 2017: Photo: Tore Sætre / Wikimedia, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Lura_Cosmopolite_(221240).jpg
 - Mayra Andrade, Central Park, 21 June 2009: Irn / Wikimedia, CC BY 3.0. https://commons.wikimedia.org/wiki/File:Mayra_Andrade.jpg
-Unmodified image copies are served locally from Wikimedia sources, displayed proportionally without cropping or modification; source and license links appear beside them. They identify the example references and do not imply endorsement. Other artists have no guessed or generated portraits.
+Unmodified image copies are served locally from Wikimedia sources, displayed with a circular CSS crop, identified beside each image; the underlying files are unmodified. The cropped presentation of the Lura photograph remains available under CC BY-SA 4.0; source and license links appear beside them. They identify the example references and do not imply endorsement. Other artists have no guessed or generated portraits.
