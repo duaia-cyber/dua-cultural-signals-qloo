@@ -41,3 +41,6 @@ The repository also includes a read-only MCP stdio adapter. Configure an MCP cli
 
 ## From references to a project
 The creator chooses a showcase, collaboration or campaign. After curating references, the tool proposes a practical format, roles to find and a first deliverable. Optional audience, location and practical constraints remain in browser memory and are included in explicit exports only. These are transparent templates, not Qloo-generated production decisions. The site explains the future DUA project → collaboration request → Market integration separately from working external Community/Radar links. No DUA account or private data integration is implemented.
+
+### Demo reference selection
+The default pair is Lura / Mayra Andrade. Known historical names previously encountered are omitted before display through an explicit editorial exclusion list in `lib/qloo.mjs`. This list is not an exhaustive life-status registry: Qloo's normalized response does not verify whether every returned person is alive or available. Results remain cultural references, never verified hiring candidates.

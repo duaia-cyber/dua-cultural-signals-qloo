@@ -1,5 +1,5 @@
-import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext } from './workflow.mjs?v=project-plan-1';
-import { downloadBriefPdf } from './pdf-export.mjs?v=project-plan-1';
+import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext } from './workflow.mjs?v=clear-plan-2';
+import { downloadBriefPdf } from './pdf-export.mjs?v=clear-plan-2';
 
 const $ = selector => document.querySelector(selector);
 const state = { selected: null, second: null, brief: null, mode: 'single', shortlist: new Map() };
@@ -108,7 +108,7 @@ $('#artist2').addEventListener('input', () => {
   $('#matches2').replaceChildren(); $('#search-status2').textContent = $('#artist2').value ? 'Search to verify this reference.' : '';
 });
 $('#artist2').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); searchSecond(); } });
-$('#goal').addEventListener('change', () => {
+$('#goal-picker').addEventListener('change', () => {
   if (!state.brief) return;
   operation++; invalidateBrief(); searchStatus.textContent = 'Build the brief again to apply the new goal.';
 });
@@ -176,8 +176,8 @@ async function buildResearchBrief() {
   const button = $('#build'); button.disabled = true; searchStatus.textContent = isBridge ? 'Comparing music and film references with Qloo…' : 'Exploring Qloo cultural signals…';
   try {
     const data = isBridge
-      ? await request('/api/bridge', { idA: state.selected.id, nameA: state.selected.name, idB: state.second.id, nameB: state.second.name, goal: $('#goal').value })
-      : await request('/api/brief', { id: state.selected.id, name: state.selected.name, goal: $('#goal').value });
+      ? await request('/api/bridge', { idA: state.selected.id, nameA: state.selected.name, idB: state.second.id, nameB: state.second.name, goal: document.querySelector('input[name=goal]:checked').value })
+      : await request('/api/brief', { id: state.selected.id, name: state.selected.name, goal: document.querySelector('input[name=goal]:checked').value });
     if (requestId !== operation) return;
     state.brief = data; state.mode = isBridge ? 'bridge' : 'single'; state.shortlist.clear();
     if (isBridge) renderBridge(data); else renderSingle(data);
@@ -199,17 +199,17 @@ $('#try-example').addEventListener('click', async () => {
   searchStatus.textContent = 'Finding the two example artists in Qloo…';
   try {
     const [firstData, secondData] = await Promise.all([
-      request('/api/search', { name: 'Cesária Évora' }), request('/api/search', { name: 'Ibrahim Ferrer' }),
+      request('/api/search', { name: 'Lura' }), request('/api/search', { name: 'Mayra Andrade' }),
     ]);
     if (requestId !== operation) return;
-    const first = findExactArtist(firstData.matches, 'Cesária Évora');
-    const second = findExactArtist(secondData.matches, 'Ibrahim Ferrer');
+    const first = findExactArtist(firstData.matches, 'Lura');
+    const second = findExactArtist(secondData.matches, 'Mayra Andrade');
     if (!first || !second || first.id.toLowerCase() === second.id.toLowerCase()) {
       searchStatus.textContent = 'The example identities could not be verified. Search and select artists manually.'; return;
     }
     state.selected = first; state.second = second;
     $('#artist').value = first.name; $('#artist2').value = second.name;
-    $('#bridge-toggle').checked = true; $('#bridge-box').hidden = false; $('#goal').value = 'showcase'; selection.hidden = false;
+    $('#bridge-toggle').checked = true; $('#bridge-box').hidden = false; document.querySelector('input[name=goal][value=showcase]').checked = true; selection.hidden = false;
     renderMatches(matches, firstData.matches, choosePrimary, first.id);
     renderMatches($('#matches2'), secondData.matches, chooseSecond, second.id);
     $('#search-status2').textContent = 'Second reference selected.';

@@ -42,3 +42,6 @@ Add an optional PDF export generated entirely in the browser with embedded, open
 
 ## Useful project handoff
 Clarify the creator job in the hero. Add a local project canvas (audience, place and practical constraint), a goal-specific action plan and an explicit proposed DUA integration map. Keep all user context in browser memory; include it in PDF/Markdown only on export. Changing the project goal invalidates the existing brief to preserve consistent review steps. Test all three goals, missing inputs and export consistency; inspect desktop/mobile with disposable fixtures. No production DUA integration or contest-result claims.
+
+## Simplify interface and default example
+Replace the historical default pair with Lura and Mayra Andrade; keep manual research available. Replace the native goal dropdown with accessible radio choices and shorten prominent copy, moving methodology to disclosure. Do not claim the provider validates life status or availability; a catalog-wide living-only filter cannot be asserted from the current API fields. Verify local UI, tests and live default results before publication.

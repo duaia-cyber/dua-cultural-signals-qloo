@@ -51,3 +51,11 @@ test('brief remains a human-reviewed suggestion rather than a booking',()=>{
   assert.match(brief.actions.join(' '),/consent|human|booking/i);
   assert.throws(()=>buildBrief('Fixture','__proto__',[],[]),e=>e.status===400);
 });
+
+test('editorial exclusions omit known historical names without claiming life-status verification', async () => {
+  const qloo = createQloo({ apiKey: 'fixture', fetchImpl: async () => new Response(JSON.stringify({results:[
+    {entity_id:'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', name:'Cesária Évora'},
+    {entity_id:'bbbbbbbb-bbbb-cccc-dddd-eeeeeeeeeeee', name:'Lura'}
+  ]}),{status:200}) });
+  assert.deepEqual((await qloo.search('Lura')).map(x=>x.name), ['Lura']);
+});
