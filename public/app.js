@@ -1,5 +1,5 @@
-import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText } from './workflow.mjs';
-import { downloadBriefPdf } from './pdf-export.mjs';
+import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText, projectContext } from './workflow.mjs?v=project-plan-1';
+import { downloadBriefPdf } from './pdf-export.mjs?v=project-plan-1';
 
 const $ = selector => document.querySelector(selector);
 const state = { selected: null, second: null, brief: null, mode: 'single', shortlist: new Map() };
@@ -244,7 +244,7 @@ function updateShortlist() {
 }
 
 function briefText() {
-  return createBriefText(state.brief, state.mode, [...state.shortlist.values()], $('#project-note').value);
+  return createBriefText(state.brief, state.mode, [...state.shortlist.values()], projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value));
 }
 
 $('#copy').addEventListener('click', async () => {
@@ -263,7 +263,7 @@ $('#download-pdf').addEventListener('click', async () => {
   const button = $('#download-pdf');
   button.disabled = true; $('#copy-status').textContent = 'Preparing your PDF…';
   try {
-    await downloadBriefPdf({ brief: state.brief, mode: state.mode, selected: [...state.shortlist.values()], note: $('#project-note').value });
+    await downloadBriefPdf({ brief: state.brief, mode: state.mode, selected: [...state.shortlist.values()], note: projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value) });
     $('#copy-status').textContent = 'PDF download started. Your note stayed in this browser.';
   } catch {
     $('#copy-status').textContent = 'PDF could not be created. Please try again or use the Markdown export.';

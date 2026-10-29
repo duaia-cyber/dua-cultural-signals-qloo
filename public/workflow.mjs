@@ -19,9 +19,11 @@ export function createOutline(brief, mode, selected) {
   if (!brief) return [];
   const goal = { showcase: 'live showcase', collaboration: 'creative collaboration', campaign: 'cultural campaign' }[brief.goal] || 'creative project';
   const names = scope => selected.filter(item => item.scope === scope).map(item => item.name).join(', ');
+  const plan = projectSteps(brief.goal, selected);
   if (mode !== 'bridge') return [
     'Starting point for a ' + goal + ': ' + brief.reference + '.',
     selected.length ? 'Selected research references: ' + selected.map(item => item.name).join(', ') + '.' : 'Select a music or film reference to develop your idea.',
+    ...plan,
     'Discuss context with people, and independently verify rights and practical arrangements.',
   ];
   const [a, b] = brief.references;
@@ -30,6 +32,7 @@ export function createOutline(brief, mode, selected) {
     'Starting point for a ' + goal + ': ' + a + ' × ' + b + '.',
     common ? 'Shared research references selected: ' + common + '.' : 'Shared thread: select a common reference if available, or develop the connection through further research.',
     (first || second) ? 'Additional perspectives: ' + [first ? a + ' — ' + first : '', second ? b + ' — ' + second : ''].filter(Boolean).join('; ') + '.' : 'Select source-specific references to develop each perspective.',
+    ...plan,
     'Discuss context with people, and independently verify rights and practical arrangements.',
   ];
 }
@@ -61,4 +64,39 @@ export function createBriefText(b, mode, selected, note) {
   }
   lines.push('', '## Working outline', ...createOutline(b, mode, selected).map(x => '- ' + x), '', '## Human review checklist', ...b.actions.map(x => '- ' + x), '', 'These are cultural research references, not confirmed collaborations, available performers, audience demand or rights clearances.', 'Tool: https://dua-cultural-signals-qloo.vercel.app');
   return lines.join('\n');
+}
+
+// Proposed working steps, not Qloo-generated claims or confirmed arrangements.
+export function projectSteps(goal, selected = []) {
+  if (!selected.length) return ['Next: select at least one reference before developing the creative direction.'];
+  const music = selected.filter(x => x.category === 'artists').map(x => x.name).join(', ');
+  const film = selected.filter(x => x.category === 'films').map(x => x.name).join(', ');
+  const plans = {
+    showcase: [
+      'Proposed format: a live performance with a short, moderated conversation about the chosen cultural references.',
+      music ? 'Music direction: discuss what the team wants to learn from ' + music + '. These are inspiration references, not proposed bookings.' : 'Music direction: choose a performer and musical direction with the team.',
+      film ? 'Visual direction: discuss ' + film + ' with a visual creator; do not screen or reuse material without permission.' : 'Visual direction: commission an original visual response if the scope allows.',
+      'People to find: a performer, a host and a production contact. Check availability, fees and venue requirements before announcing anything.',
+      'First deliverable: agree a one-page concept, audience, venue, budget ceiling and date with the team.'
+    ],
+    collaboration: [
+      'Proposed format: two creators develop one original response to the selected references.',
+      'People to find: a creative collaborator with a complementary practice; discuss the brief before agreeing to work.',
+      'First deliverable: agree one small sample, each person’s role, credits, fee, ownership and a review date.',
+      'Review: decide together whether the sample represents both contributors before expanding the project.'
+    ],
+    campaign: [
+      'Proposed format: one original campaign concept tested through a small draft before wider production.',
+      'People to find: a writer and a visual or video creator suited to the agreed format.',
+      'First deliverable: define the audience, message, channel, call to action and one draft asset.',
+      'Review: ask the intended audience for feedback; confirm permissions and production budget before publishing.'
+    ]
+  };
+  return plans[goal] || plans.collaboration;
+}
+
+export function projectContext(note, audience, place, constraint) {
+  return [[null, note], ['Audience', audience], ['Location', place], ['Practical limit', constraint]]
+    .filter(([, value]) => String(value || '').trim())
+    .map(([label, value]) => (label ? label + ': ' : '') + String(value).trim()).join('\n');
 }

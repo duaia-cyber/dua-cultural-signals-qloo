@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findExactArtist, communitySearchUrl, createOutline, createBriefText } from '../public/workflow.mjs';
+import { findExactArtist, communitySearchUrl, createOutline, createBriefText, projectSteps, projectContext } from '../public/workflow.mjs';
 
 test('example requires one exact, unambiguous identity and never guesses another artist', () => {
   const one = { id: 'abc', name: 'Cesária Évora' };
@@ -53,3 +53,17 @@ test('single-reference export is honest when the user selected nothing', () => {
   assert.doesNotMatch(output, /## Your project note/);
   assert.equal(createBriefText(null, 'single', [], ''), '');
 });
+
+ test('project plans distinguish real creative jobs without implying bookings', () => {
+ const selected = [{name: 'Reference', category: 'artists'}];
+ assert.match(projectSteps('showcase', selected).join(' '), /not proposed bookings/);
+ assert.match(projectSteps('collaboration', selected).join(' '), /ownership/);
+ assert.match(projectSteps('campaign', selected).join(' '), /call to action/);
+ assert.match(projectSteps('campaign', []).join(' '), /select at least one/);
+ });
+ test('local project context omits blank fields and is included in export', () => {
+ const note = projectContext('Brief', 'Creators', '', 'Small team');
+ assert.equal(note, 'Brief\nAudience: Creators\nPractical limit: Small team');
+ const brief = {reference:'Artist', goal:'campaign', source:'Sample', actions:[], artists:[], films:[]};
+ assert.ok(createBriefText(brief, 'single', [], note).includes(note));
+ });

@@ -38,3 +38,6 @@ The repository also includes a read-only MCP stdio adapter. Configure an MCP cli
 ## Deployment and limitations
 
 `vercel.json` serves `public/` and forwards API requests to `api/index.mjs`. Configure the Qloo key as a sensitive server environment variable. The demo's in-memory per-instance rate limiter is not a global quota or production-grade protection. Real production integration would need its own licensed access, privacy review and durable abuse/usage controls. This repository is MIT licensed and does not contain proprietary DUA production code.
+
+## From references to a project
+The creator chooses a showcase, collaboration or campaign. After curating references, the tool proposes a practical format, roles to find and a first deliverable. Optional audience, location and practical constraints remain in browser memory and are included in explicit exports only. These are transparent templates, not Qloo-generated production decisions. The site explains the future DUA project → collaboration request → Market integration separately from working external Community/Radar links. No DUA account or private data integration is implemented.

@@ -39,3 +39,6 @@ Expose the existing verified search and comparison as a read-only MCP stdio tool
 ## Editorial PDF and charts
 
 Add an optional PDF export generated entirely in the browser with embedded, open-licensed fonts and a pinned local PDF library. Reuse the real selected references, provenance, brief note, research trace and review checklist. Show two source-comparison charts from the actual returned artist and film samples; label them as sample counts, never audiences or impact. Support pagination, accents, honest empty states and failure messages. Preserve Markdown and copy actions. Generate a PDF from real public Qloo results, inspect text, charts and page layout, test long content and mobile UI, then publish the verified standalone demo and update the existing draft without submitting it.
+
+## Useful project handoff
+Clarify the creator job in the hero. Add a local project canvas (audience, place and practical constraint), a goal-specific action plan and an explicit proposed DUA integration map. Keep all user context in browser memory; include it in PDF/Markdown only on export. Changing the project goal invalidates the existing brief to preserve consistent review steps. Test all three goals, missing inputs and export consistency; inspect desktop/mobile with disposable fixtures. No production DUA integration or contest-result claims.
