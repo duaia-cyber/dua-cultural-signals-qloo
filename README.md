@@ -1,31 +1,35 @@
-# DUA Cultural Signals — prototype
+# DUA Cultural Signals
 
-An independent, experimental application for the Qloo Agentic Hackathon. It helps a cultural programmer start from an artist reference, inspect possible matching entities, and explore related artists and films. It is not part of the production DUA platform and contains no DUA user data or proprietary code.
+A small, human-guided cultural discovery tool built for the Qloo Agentic Hackathon. Start with an artist, confirm their identity, choose a creative goal, and obtain cross-domain cultural references plus a practical review checklist.
 
-## Status
+## Run
 
-**Local development only; no entry has been submitted.** The Qloo access request was submitted on 29 October 2026 after consent; receipt of the key has not yet been confirmed and may take several business days. The actual API, public demo, and competition eligibility have not been verified. Search and recommendations intentionally report an unavailable state without a key; there are no built-in fake recommendations.
+Node.js 20+. No runtime dependencies. Set `QLOO_API_KEY` privately in the server environment, then run `npm start`. Open http://127.0.0.1:3850. The key must never be placed in browser code, committed, or included in a demo recording.
 
-## Setup
+`npm test` runs isolated tests with synthetic fixtures and makes no provider calls. Real Qloo search and music/film insights were separately verified on 29 October 2026 with Cesária Évora as a public reference. The test suite is not a substitute for that live check.
 
-Requires Node.js 20 or later. Copy `.env.example` into a local environment configuration or set the values manually. The key is server-only and must never be committed, placed in a browser bundle, logged, or sent in chat.
+## Judge walkthrough
 
-```sh
-export QLOO_API_KEY='set privately'
-node server.mjs
-```
+1. Search for **Cesária Évora**.
+2. Select the correct artist from Qloo's matches. This is an explicit human identity checkpoint.
+3. Choose a live showcase, collaboration, or campaign.
+4. Select **Explore connections**. The server verifies the reference, queries Qloo for artists and films, and composes a goal-specific research brief.
+5. Add references with +, remove any that do not fit, then copy or download the Markdown brief. Try another reference or goal.
 
-Open `http://127.0.0.1:3850`. Run `node --test` to exercise server-side behaviour using isolated test fixtures: no test calls external services. Qloo hackathon access uses `https://hackathon.api.qloo.com` and the `X-Api-Key` header. A correct response from the live API remains a requirement before claiming the prototype works.
+The app uses Qloo's `/search` and `/v2/insights` with `filter.type` and `signal.interests.entities`. All provider calls occur on the server. Provider errors, missing access and empty matches are shown explicitly; no synthetic data is substituted in the live application.
 
-The working application will require a separately reviewed public repository with an open-source licence and a publicly hosted demo. No existing DUA repository is to be made public for this submission. Do not commit API responses, keys, personal data, or DUA-specific code.
+## Agentic tool boundary
 
-## Sources
+This is a bounded discovery tool and deterministic orchestration workflow, not an autonomous LLM or a production DUA assistant. Its structured `/api/search` and `/api/brief` endpoints can be called by an agent. The human chooses the identity and goal; the tool executes the cross-domain research steps. It does not negotiate, contact anyone, purchase, book, clear rights, or invent a cultural interpretation. No LLM service is needed.
 
-- Contest rules: https://qloo.devpost.com/rules
-- Developer guide: https://docs.qloo.com/reference/qloo-llm-hackathon-developer-guide
-- Entity search: https://docs.qloo.com/reference/get-search
-- Recommendations: https://docs.qloo.com/reference/basic-insights-use-case
+GET `/api/search?name=Ces%C3%A1ria%20%C3%89vora` returns candidate entities. GET `/api/brief?id=<verified-uuid>&name=<artist-name>&goal=showcase` returns `reference`, `goal`, `artists`, `films`, `actions`, and `source`. Goals: `showcase`, `campaign`, `collaboration`. A reference must match a fresh Qloo lookup before insights are requested.
 
-## Boundaries
+## Honest limitations
 
-Ranked matches are Qloo's cultural affinity signals, not evidence of availability, consent, nationality, collaboration, attendance, or audience size. Suggested actions in the brief are prompts for human review, not confirmed bookings or rights clearances. Users are told not to enter private personal data. The service does not persist searches or results.
+Affinity is not nationality, availability, endorsement, audience demand, a booking recommendation, or proof of Lusophone representation. Results may include deceased artists. Use them as artistic references; identify performers independently. Qloo coverage may be uneven and results change over time. Review cultural context, rights, fees and consent with people.
+
+The public demo uses a server-side hackathon key. It collects no DUA accounts, community posts, conversations or private information. It does not persist searches or results. Hosting/provider infrastructure may retain ordinary access logs. Enter public artist names only. The prototype's in-memory request throttle is per server instance, not a global billing cap or production-grade abuse system.
+
+## Deployment
+
+`vercel.json` serves `public/` and forwards API requests to `api/index.mjs`. Configure `QLOO_API_KEY` as a sensitive production environment variable, then deploy. Do not upload `.env*`, `.vercel/`, local validation harnesses or provider responses. The source is MIT licensed. This standalone repository contains no proprietary DUA production code.
