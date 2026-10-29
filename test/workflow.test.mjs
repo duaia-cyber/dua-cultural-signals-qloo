@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findExactArtist, createOutline, createBriefText, projectSteps, projectContext, researchStages, selectionInsight } from '../public/workflow.mjs';
+import { findExactArtist, createOutline, createBriefText, projectSteps, projectContext, researchStages, researchTrace, selectionInsight, collaborationNote } from '../public/workflow.mjs';
 
 test('example requires one exact, unambiguous identity and never guesses another artist', () => {
   const one = { id: 'abc', name: 'Cesária Évora' };
@@ -70,4 +70,38 @@ test('creative prompts remain separate from shared evidence and never imply book
   assert.match(selectionInsight('films','common').evidence, /both/);
   assert.match(selectionInsight('artists','onlyA').prompt, /not a booking/);
   assert.match(selectionInsight('films','onlyB').prompt, /Verify/);
+});
+
+test('research trace reflects the returned samples and only recorded lookup outcomes', () => {
+  const base = {
+    references: ['Artist A', 'Artist B'],
+    artists: { sampleA: 3, sampleB: 2, common: [{name:'Shared'}] },
+    films: { sampleA: 1, sampleB: 0, common: [] },
+    exploration: { status: 'not_needed', attempts: [] },
+  };
+  let trace = researchTrace(base);
+  assert.match(trace[1].detail, /Artists returned: 3 \/ 2\. Films returned: 1 \/ 0\. Shared entities: 1/);
+  assert.match(trace[2].detail, /no extra lookup was made/i);
+  assert.equal(trace.length, 3);
+  trace = researchTrace({ ...base, artists: {...base.artists, common: []}, exploration: { status:'unavailable', attempts:[{ status:'not_found', anchor:'First candidate', matches:[] }, { status:'unavailable', anchor:'Second candidate' }] } });
+  assert.match(trace[2].detail, /up to two/);
+  assert.match(trace[3].detail, /First candidate.*no shared artist/);
+  assert.match(trace[4].detail, /Second candidate.*unavailable/);
+  assert.doesNotMatch(trace.map(x => x.detail).join(' '), /connection was found/);
+  trace = researchTrace({ ...base, artists:{...base.artists,common:[]}, exploration:{status:'no_candidate',attempts:[]} });
+  assert.match(trace[2].detail, /no additional.*returned/i);
+  assert.equal(trace.length, 3);
+});
+
+test('collaboration note uses only selected references and user-provided context', () => {
+  const brief = {goal:'showcase'};
+  assert.equal(collaborationNote(brief, [], 'Lisbon', ''), '');
+  assert.equal(collaborationNote(null, [{name:'A'}], 'Lisbon', ''), '');
+  const note = collaborationNote(brief, [{name:'Chosen A'}, {name:'Chosen B'}], 'Audience: creators\nLocation: Lisbon', 'Explore a live conversation');
+  assert.match(note, /a live event/);
+  assert.match(note, /Audience: creators\nLocation: Lisbon/);
+  assert.match(note, /Chosen A, Chosen B/);
+  assert.match(note, /Explore a live conversation/);
+  assert.match(note, /not confirmed participants/);
+  assert.doesNotMatch(note, /booking confirmed|confirmed collaborator|audience size/i);
 });

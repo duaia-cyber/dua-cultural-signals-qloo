@@ -12,3 +12,10 @@ Goal: move from verified cultural references to a usable team brief.
 Files: public/index.html, app.js, workflow.mjs, pdf-export.mjs, style.css; focused tests.
 Risks: context reset, misleading provenance, export omissions, hidden keyboard controls.
 Acceptance: context survives research, rationale exported in Markdown/PDF, stages reflect actual outcomes, desktop/mobile checked, isolated tests pass. No DUA account integration or inferred costs.
+
+## Demonstration and collaboration handoff
+
+- Show actual Qloo verification, returned sample sizes and the bounded follow-up decision; never present missing, failed or unrequested lookups as completed.
+- Create a copyable, editable collaboration note from the user's own context and chosen references. It is local only and sends nothing.
+- Verify common results, no-match, unavailable and no-candidate outcomes with disposable fixtures; check copy, desktop and mobile.
+- Update the existing submitted Devpost entry with the verified feature and an authentic example. Keep DUA account matching explicitly future work.

@@ -1,4 +1,4 @@
-import { findExactArtist, createOutline, describeExploration, createBriefText, projectContext, researchStages, selectionInsight } from './workflow.mjs?v=selection-7';
+import { findExactArtist, createOutline, createBriefText, projectContext, researchStages, researchTrace, selectionInsight, collaborationNote } from './workflow.mjs?v=handoff-9';
 import { downloadBriefPdf } from './pdf-export.mjs?v=decision-6';
 
 const $ = selector => document.querySelector(selector);
@@ -155,7 +155,13 @@ function renderBridge(data) {
   $('#bridge-common-status').textContent = count
     ? count + (count === 1 ? ' entity appears in both returned samples.' : ' entities appear in both returned samples.')
     : 'No shared entities were found in these returned samples. Try another pair to explore further.';
-  $('#trace-description').textContent = describeExploration(data);
+  const trace = $('#trace-steps'); trace.replaceChildren();
+  for (const step of researchTrace(data)) {
+    const li = document.createElement('li');
+    const title = document.createElement('strong'); title.textContent = step.title;
+    const detail = document.createElement('span'); detail.textContent = step.detail;
+    li.append(title, detail); trace.append(li);
+  }
   $('#source-a-name').textContent = a; $('#source-b-name').textContent = b;
   renderItems($('#common-artists'), data.artists.common, 'artists', 'Returned for both ' + a + ' and ' + b, 'No common artists in the returned samples.', 'common');
   renderItems($('#common-films'), data.films.common, 'films', 'Returned for both ' + a + ' and ' + b, 'No common films in the returned samples.', 'common');
@@ -257,6 +263,7 @@ function updateShortlist() {
   $('#dock-hint').textContent = count ? 'Add your context, review the plan and export your PDF.' : 'Use + to keep the ideas you want to explore.';
   $('#review-brief').disabled = !count;
   updateContextPreview();
+  updateCollaborationNote();
   $('#copy-status').textContent = '';
   const outline = $('#creative-outline'); outline.replaceChildren();
   for (const line of createOutline(state.brief, state.mode, [...state.shortlist.values()])) { const li = document.createElement('li'); li.textContent = line; outline.append(li); }
@@ -310,6 +317,24 @@ function exportContext() {
 function updateContextPreview() {
   $('#context-preview').textContent = projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value) || 'Add a project, audience or practical limit to make this brief yours.';
 }
-for (const id of ['project-note', 'project-audience', 'project-place', 'project-constraint']) $('#' + id).addEventListener('input', updateContextPreview);
+function updateCollaborationNote() {
+  const context = projectContext($('#project-note').value, $('#project-audience').value, $('#project-place').value, $('#project-constraint').value);
+  const text = collaborationNote(state.brief, [...state.shortlist.values()], context, $('#selection-reason').value);
+  $('#collaboration-note').value = text;
+  $('#copy-note').disabled = !text;
+  $('#note-preview').hidden = !text;
+  $('#note-hint').textContent = text ? 'Copy and edit the note yourself. Nothing is sent.' : 'Choose a reference to prepare a note. Nothing is sent.';
+  $('#note-status').textContent = '';
+}
+for (const id of ['project-note', 'project-audience', 'project-place', 'project-constraint', 'selection-reason']) {
+  $('#' + id).addEventListener('input', () => { updateContextPreview(); updateCollaborationNote(); });
+}
+
+$('#copy-note').addEventListener('click', async () => {
+  const note = $('#collaboration-note');
+  if (!note.value) return;
+  try { await navigator.clipboard.writeText(note.value); $('#note-status').textContent = 'Note copied. Edit and share it yourself.'; }
+  catch { $('#note-preview').open = true; note.focus(); note.select(); $('#note-status').textContent = 'Clipboard unavailable. Copy the selected text manually.'; }
+});
 
 $('.edit-context').addEventListener('click', () => { $('#project-context').open = true; });

@@ -42,6 +42,56 @@ export function describeExploration(data) {
   return 'The initial samples had no shared entities. ' + (attempts.length > 1 ? 'After checking ' + attempts[0].anchor + ', the tool explored ' : 'The tool explored ') + extra.anchor + ', returned for ' + a + '. Qloo’s returned artist samples for ' + extra.anchor + ' and ' + b + ' both include ' + extra.matches.map(x => x.name).join(', ') + '. This is a research path, not evidence of a personal relationship.';
 }
 
+// A factual trace of the calls and decisions recorded by the bridge endpoint.
+// It does not start further queries or infer reasons behind Qloo's results.
+export function researchTrace(brief) {
+  const [first, second] = brief.references;
+  const artists = brief.artists, films = brief.films;
+  const shared = artists.common.length + films.common.length;
+  const steps = [
+    { title: 'Verify the references', detail: first + ' and ' + second + ' were matched by Qloo ID.' },
+    { title: 'Compare the samples', detail: 'Artists returned: ' + artists.sampleA + ' / ' + artists.sampleB + '. Films returned: ' + films.sampleA + ' / ' + films.sampleB + '. Shared entities: ' + shared + '.' },
+  ];
+  const extra = brief.exploration;
+  if (!extra) {
+    steps.push({ title: 'Next step', detail: 'No additional research outcome was recorded.' });
+    return steps;
+  }
+  if (extra.status === 'not_needed') {
+    steps.push({ title: 'Decision', detail: shared ? 'The initial samples had shared results, so no extra lookup was made.' : 'No extra lookup was recorded.' });
+    return steps;
+  }
+  if (extra.status === 'no_candidate') {
+    steps.push({ title: 'Decision', detail: 'No shared result and no additional first-reference artist was returned to explore.' });
+    return steps;
+  }
+  steps.push({ title: 'Decision', detail: 'No shared entity in the initial samples. Explore up to two returned artists.' });
+  for (const attempt of extra.attempts || []) {
+    let detail;
+    if (attempt.status === 'unavailable') detail = 'Lookup for ' + attempt.anchor + ' was unavailable; research stopped.';
+    else if (attempt.status === 'found') detail = 'The returned sample for ' + attempt.anchor + ' also included ' + attempt.matches.map(item => item.name).join(', ') + ' from ' + second + '’s sample.';
+    else detail = 'The returned sample for ' + attempt.anchor + ' had no shared artist with ' + second + '’s sample.';
+    steps.push({ title: 'Additional lookup', detail });
+  }
+  return steps;
+}
+
+// A user-controlled starting point: no recipient lookup, sending or claimed agreement.
+export function collaborationNote(brief, selected, context, rationale) {
+  if (!brief || !selected.length) return '';
+  const goal = { showcase: 'a live event', collaboration: 'a creative collaboration', campaign: 'a cultural campaign' }[brief.goal] || 'a creative project';
+  const details = String(context || '').trim();
+  const reason = String(rationale || '').trim();
+  return [
+    'Hi,', '', 'I am exploring ' + goal + ' and would like to exchange ideas with you.',
+    ...(details ? ['', 'Project context:', details] : []),
+    '', 'Creative research references: ' + selected.map(item => item.name).join(', ') + '.',
+    ...(reason ? ['', 'What I would like to explore:', reason] : []),
+    '', 'Would you be open to discussing the idea, possible roles and a first step?',
+    '', 'This is an initial idea; these references are inspiration, not confirmed participants.',
+  ].join('\n');
+}
+
 
 export function createBriefText(b, mode, selected, note) {
   if (!b) return '';
