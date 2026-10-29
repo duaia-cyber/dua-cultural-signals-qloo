@@ -1,4 +1,5 @@
 import { findExactArtist, communitySearchUrl, createOutline, describeExploration, createBriefText } from './workflow.mjs';
+import { downloadBriefPdf } from './pdf-export.mjs';
 
 const $ = selector => document.querySelector(selector);
 const state = { selected: null, second: null, brief: null, mode: 'single', shortlist: new Map() };
@@ -256,4 +257,15 @@ $('#download').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([briefText()], { type: 'text/markdown;charset=utf-8' }));
   const link = document.createElement('a'); link.href = url; link.download = 'DUA-cultural-brief.md'; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000); $('#copy-status').textContent = 'Markdown download started.';
+});
+$('#download-pdf').addEventListener('click', async () => {
+  if (!state.brief) return;
+  const button = $('#download-pdf');
+  button.disabled = true; $('#copy-status').textContent = 'Preparing your PDF…';
+  try {
+    await downloadBriefPdf({ brief: state.brief, mode: state.mode, selected: [...state.shortlist.values()], note: $('#project-note').value });
+    $('#copy-status').textContent = 'PDF download started. Your note stayed in this browser.';
+  } catch {
+    $('#copy-status').textContent = 'PDF could not be created. Please try again or use the Markdown export.';
+  } finally { button.disabled = false; }
 });

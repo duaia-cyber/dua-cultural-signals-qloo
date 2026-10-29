@@ -8,6 +8,10 @@ const files = new Map([
   ['/style.css', ['public/style.css','text/css; charset=utf-8']],
   ['/app.js', ['public/app.js','text/javascript; charset=utf-8']],
   ['/workflow.mjs', ['public/workflow.mjs','text/javascript; charset=utf-8']],
+  ['/pdf-export.mjs', ['public/pdf-export.mjs','text/javascript; charset=utf-8']],
+  ['/vendor/jspdf.umd.min.js', ['public/vendor/jspdf.umd.min.js','text/javascript; charset=utf-8']],
+  ['/vendor/fonts/NotoSans-Regular.ttf', ['public/vendor/fonts/NotoSans-Regular.ttf','font/ttf']],
+  ['/vendor/fonts/NotoSans-Bold.ttf', ['public/vendor/fonts/NotoSans-Bold.ttf','font/ttf']],
   ['/openapi.json', ['public/openapi.json','application/json; charset=utf-8']],
 ]);
 const server = http.createServer(async (req,res) => {

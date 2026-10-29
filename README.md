@@ -10,7 +10,7 @@ This is a standalone open-source hackathon prototype inspired by the DUA ecosyst
 
 1. Select **Try a live example** to verify and compare Cesária Évora and Ibrahim Ferrer in one step. Alternatively, search for and select both identities manually, choose **A live showcase**, and select **Build research brief**.
 2. Review the direct connection and matching Qloo entities; select references with + and add a project note. The working outline uses only your selections.
-3. Copy or download the brief, or explicitly search for a selected reference in the Community.
+3. Download the editorial PDF, including charts based on the returned samples, copy the brief or download Markdown. You can also explicitly search for a selected reference in the Community.
 4. Optional: disable the comparison to explore a single reference instead; choose another pair to try a case with no overlap.
 
 Qloo responses change. The walkthrough is not a promise that any particular result will always appear.
@@ -19,15 +19,15 @@ Qloo responses change. The walkthrough is not a promise that any particular resu
 
 The server rechecks both selected identities with Qloo `/search`, then independently requests artist and film `/v2/insights` for each artist. It compares **up to six returned entities per artist and domain** by canonical Qloo entity ID. `common` means a matching ID is in both returned samples; `onlyA` and `onlyB` are sample-specific, not proof that no other connection exists. `direct` records when one seed artist is in the other artist's returned music sample. If the initial artist and film samples have no shared entity, the tool performs at most two additional Qloo lookups: it explores up to the first two additional artists returned for the first seed and checks their returned music samples against the second seed's music sample. It stops when it finds a path or a provider request fails, and presents each research step or the limited no-match, no-candidate or unavailable state explicitly. If an essential initial provider call fails, the tool does not present a complete comparison.
 
-The selected references, their provenance, goal, optional user-written project note and review checklist can be exported. The note stays in the browser and is not sent to the server or Qloo by the app. Searches contain only the artist names. No DUA account information or community content is used, and the app itself does not save searches; hosting providers may retain ordinary access logs.
+The selected references, their provenance, goal, optional user-written project note and review checklist can be exported. PDF charts show counts within the returned samples, not audience sizes or demand. The PDF is generated in the browser. The note stays in the browser and is not sent to the server or Qloo by the app. Searches contain only the artist names. No DUA account information or community content is used, and the app itself does not save searches; hosting providers may retain ordinary access logs.
 
 This is a deterministic tool and not an autonomous LLM agent. Its documented endpoints and MCP adapter are suitable for a separately built agent to call; no integration into DUA Chat is claimed. Qloo returns cultural affinities, not the causal reasons for them. Do not infer demographic audience overlap, nationality, personal relationships, availability, rights clearance or endorsement. Results may contain deceased artists and must not be presented as a list of performers available to book. An empty intersection only describes the limited returned samples.
 
 ## Run locally
 
-Node.js 20 or later. There are no runtime dependencies. Set `QLOO_API_KEY` in a server-only environment, run `npm start`, and open http://127.0.0.1:3850. Use an authorized Qloo account and verify its licensing/usage conditions. Never commit credentials, place them in client code or include them in recordings.
+Node.js 20 or later. The server has no runtime dependencies. Set `QLOO_API_KEY` in a server-only environment, run `npm start`, and open http://127.0.0.1:3850. Use an authorized Qloo account and verify its licensing/usage conditions. Never commit credentials, place them in client code or include them in recordings.
 
-`npm test` runs isolated tests without contacting Qloo. `node scripts/fixture-server.mjs` starts a local UI with explicitly labelled synthetic data for development only. The real example was separately exercised on 29 October 2026 with Qloo's hackathon API. The fixture is not evidence of a live API response.
+Run `npm ci` once to install the pinned PDF test dependency; `npm test` then runs isolated tests without contacting Qloo. `node scripts/fixture-server.mjs` starts a local UI with explicitly labelled synthetic data for development only. The real example was separately exercised on 29 October 2026 with Qloo's hackathon API. The fixture is not evidence of a live API response. The vendored browser distribution is jsPDF 4.2.1 (MIT); Noto Sans fonts are provided under the SIL Open Font License. Their license files are in `public/vendor/`.
 
 ## Agent tool interface
 

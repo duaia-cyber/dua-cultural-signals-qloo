@@ -35,3 +35,7 @@ Add an optional one-click live example that resolves real artist identities thro
 ## Agent tool integration
 
 Expose the existing verified search and comparison as a read-only MCP stdio tool, so an agent can discover and call it using the live demo without receiving the Qloo secret. Keep the public demo as the source of results, validate inputs, handle provider errors and verify the protocol and tool calls with local fixtures and a real read-only request. Do not claim an autonomous language-model agent or a DUA production integration.
+
+## Editorial PDF and charts
+
+Add an optional PDF export generated entirely in the browser with embedded, open-licensed fonts and a pinned local PDF library. Reuse the real selected references, provenance, brief note, research trace and review checklist. Show two source-comparison charts from the actual returned artist and film samples; label them as sample counts, never audiences or impact. Support pagination, accents, honest empty states and failure messages. Preserve Markdown and copy actions. Generate a PDF from real public Qloo results, inspect text, charts and page layout, test long content and mobile UI, then publish the verified standalone demo and update the existing draft without submitting it.

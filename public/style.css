@@ -84,6 +84,10 @@ main { max-width: 1360px; margin: 0 auto; }
 .brief li { margin-bottom: 10px; }
 .brief button { min-height: 44px; margin-top: 8px; padding: 10px 16px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: transparent; color: white; font-size: 13px; font-weight: 600; }
 .brief button:hover { background: #2a2a2d; }
+.brief #download-pdf { background: var(--blue); border-color: var(--blue); color: white; }
+.brief #download-pdf:hover { background: #345be0; }
+.brief #download-pdf:disabled { opacity: .65; cursor: wait; }
+.brief .pdf-help { color: #b4b8c4; font-size: 11px; line-height: 1.5; }
 .brief #copy-status { font-size: 12px; }
 
 .method { display: grid; grid-template-columns: 1fr minmax(0, 2fr) 1fr; gap: 24px; margin: 0 48px; padding: 32px 0 70px; border-top: 1px solid var(--line); }

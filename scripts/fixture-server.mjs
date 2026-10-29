@@ -17,7 +17,7 @@ const client = {
   },
 };
 const handler=createHandler({client});
-const files=new Map([['/',['index.html','text/html; charset=utf-8']],['/style.css',['style.css','text/css; charset=utf-8']],['/app.js',['app.js','text/javascript; charset=utf-8']],['/workflow.mjs',['workflow.mjs','text/javascript; charset=utf-8']],['/openapi.json',['openapi.json','application/json; charset=utf-8']]]);
+const files=new Map([['/',['index.html','text/html; charset=utf-8']],['/style.css',['style.css','text/css; charset=utf-8']],['/app.js',['app.js','text/javascript; charset=utf-8']],['/workflow.mjs',['workflow.mjs','text/javascript; charset=utf-8']],['/pdf-export.mjs',['pdf-export.mjs','text/javascript; charset=utf-8']],['/vendor/jspdf.umd.min.js',['vendor/jspdf.umd.min.js','text/javascript; charset=utf-8']],['/vendor/fonts/NotoSans-Regular.ttf',['vendor/fonts/NotoSans-Regular.ttf','font/ttf']],['/vendor/fonts/NotoSans-Bold.ttf',['vendor/fonts/NotoSans-Bold.ttf','font/ttf']],['/openapi.json',['openapi.json','application/json; charset=utf-8']]]);
 const port = Number(process.env.PORT || 3851);
 http.createServer(async(req,res)=>{
   const path=new URL(req.url,'http://localhost').pathname;
