@@ -2,9 +2,9 @@
 
 A human-guided research tool built for the Qloo Agentic Hackathon. A cultural programmer chooses two public artist references, and the tool compares Qloo's returned music and film results. It shows direct reference-to-reference signals, entities occurring in both bounded result sets, and the remaining source-specific references. It helps turn a research trail into a curated, exportable creative brief.
 
-[Live demo](https://dua-cultural-signals-qloo.vercel.app) · [Machine-readable OpenAPI tool specification](https://dua-cultural-signals-qloo.vercel.app/openapi.json) · [DUA creative ecosystem](https://dua.2lados.pt/) · [DUA Radar](https://dua.2lados.pt/radar-cultural)
+[Live demo](https://dua-cultural-signals-qloo.vercel.app) · [Machine-readable OpenAPI tool specification](https://dua-cultural-signals-qloo.vercel.app/openapi.json) · [DUA creative ecosystem](https://dua.2lados.pt/) · [DUA Community](https://dua.2lados.pt/feed) · [DUA Radar](https://dua.2lados.pt/radar-cultural)
 
-This is a standalone open-source hackathon prototype inspired by the DUA ecosystem. It does not log users into DUA, access DUA community data, or represent a feature already integrated into the main platform.
+This is a standalone open-source hackathon prototype inspired by the DUA ecosystem. It links to the real DUA Community, where people can browse creators and explore the community separately. The link does not transmit search results or match Qloo entities to DUA profiles. The prototype does not log users into DUA, access DUA community data, or represent a feature already integrated into the main platform.
 
 ## Judge walkthrough
 
