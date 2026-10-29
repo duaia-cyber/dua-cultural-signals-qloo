@@ -80,7 +80,7 @@ test('adaptive research checks one returned artist and reports the verified path
   const response = await call(createHandler({ client }), params);
   assert.equal(response.status, 200);
   assert.equal(calls.length, 5);
-  assert.deepEqual(response.body.exploration, { status: 'found', anchor: uniqueA.name, matches: [uniqueB], sampleSize: 2 });
+  assert.deepEqual(response.body.exploration, { status: 'found', anchor: uniqueA.name, matches: [uniqueB], sampleSize: 2, attempts: [{ status: 'found', anchor: uniqueA.name, matches: [uniqueB], sampleSize: 2 }] });
 });
 
 test('adaptive research reports a limited no-match result without fabricating a path', () => {
@@ -101,5 +101,29 @@ test('failed optional research is marked unavailable while verified initial resu
   assert.equal(response.status, 200);
   assert.equal(response.body.exploration.status, 'unavailable');
   assert.equal(response.body.exploration.anchor, uniqueA.name);
+  assert.equal(response.body.exploration.attempts.length, 1);
   assert.equal(response.body.artists.onlyA[0].name, uniqueA.name);
+});
+
+test('adaptive research tries at most two candidates and stops when the second gives a path', async () => {
+  const calls = [];
+  const client = {
+    search: async name => name === A.name ? [A] : [B],
+    insights: async (id, domain) => {
+      calls.push([id, domain]);
+      if (domain === 'films') return [];
+      if (id === A.id) return [uniqueA, shared];
+      if (id === B.id) return [uniqueB];
+      if (id === uniqueA.id) return [];
+      if (id === shared.id) return [uniqueB];
+      throw new Error('unexpected candidate');
+    },
+  };
+  const response = await call(createHandler({ client }), params);
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 6);
+  assert.equal(response.body.exploration.status, 'found');
+  assert.deepEqual(response.body.exploration.attempts.map(x => x.status), ['not_found', 'found']);
+  assert.equal(response.body.exploration.anchor, shared.name);
+  assert.equal(response.body.exploration.matches[0].id, uniqueB.id);
 });

@@ -69,7 +69,7 @@
       "get": {
         "operationId": "compareCulturalReferences",
         "summary": "Compare Qloo references for two verified artists",
-        "description": "Fetches up to six artist and six film results per artist. 'common' means the same Qloo entity ID occurred in both returned samples; 'onlyA' and 'onlyB' indicate presence in one returned sample, not proof of no relationship. 'direct' lists when one input artist occurred in the other artist's returned artist sample. Names, IDs and results are not evidence of available performers, shared audiences, endorsement or rights. Output is deterministic and makes no autonomous decisions. If there is no shared entity in the initial artist and film samples, the tool automatically checks up to six results for one additional artist from the first sample. It reports the candidate and matches or an explicit no-match/unavailable outcome. This bounded exploratory route is not proof of relationships or audience overlap.",
+        "description": "Fetches up to six artist and six film results per artist. 'common' means the same Qloo entity ID occurred in both returned samples; 'onlyA' and 'onlyB' indicate presence in one returned sample, not proof of no relationship. 'direct' lists when one input artist occurred in the other artist's returned artist sample. Names, IDs and results are not evidence of available performers, shared audiences, endorsement or rights. Output follows deterministic bounded rules and does not contact people or make bookings. If there is no shared entity in the initial artist and film samples, the tool automatically checks up to six results for up to two additional artists from the first sample, stopping after the first useful path or provider error. It reports the candidate and matches or an explicit no-match/unavailable outcome. This bounded exploratory route is not proof of relationships or audience overlap.",
         "parameters": [
           {
             "name": "nameA",
@@ -301,6 +301,42 @@
               "unavailable",
               "no_candidate",
               "not_needed"
+            ]
+          },
+          "anchor": {
+            "type": "string"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entity"
+            }
+          },
+          "sampleSize": {
+            "type": "integer"
+          },
+          "attempts": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/ExplorationAttempt"
+            }
+          }
+        }
+      },
+      "ExplorationAttempt": {
+        "type": "object",
+        "required": [
+          "status",
+          "anchor"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "not_found",
+              "unavailable"
             ]
           },
           "anchor": {

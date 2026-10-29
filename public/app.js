@@ -1,3 +1,5 @@
+import { findExactArtist, communitySearchUrl, createOutline } from './workflow.mjs';
+
 const $ = selector => document.querySelector(selector);
 const state = { selected: null, second: null, brief: null, mode: 'single', shortlist: new Map() };
 let operation = 0;
@@ -22,11 +24,11 @@ function invalidateBrief() {
   results.hidden = true;
 }
 
-function renderMatches(container, data, onSelect) {
+function renderMatches(container, data, onSelect, selectedId = '') {
   container.replaceChildren();
   for (const match of data) {
     const button = document.createElement('button');
-    button.type = 'button'; button.className = 'match'; button.setAttribute('aria-pressed', 'false');
+    button.type = 'button'; button.className = 'match'; button.setAttribute('aria-pressed', String(match.id.toLowerCase() === selectedId.toLowerCase()));
     const details = document.createElement('span');
     const name = document.createElement('strong'); name.textContent = match.name; details.append(name);
     if (match.disambiguation && match.disambiguation.toLowerCase() !== match.name.toLowerCase()) {
@@ -43,6 +45,20 @@ function renderMatches(container, data, onSelect) {
   }
 }
 
+function choosePrimary(match) {
+  state.selected = match; state.second = null;
+  $('#matches2').replaceChildren(); $('#search-status2').textContent = '';
+  selection.hidden = false; searchStatus.textContent = 'First reference selected.';
+}
+
+function chooseSecond(match) {
+  if (!state.selected || match.id.toLowerCase() === state.selected.id.toLowerCase()) {
+    state.second = null; $('#matches2').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', 'false'));
+    $('#search-status2').textContent = 'Choose a different artist for the second reference.'; return;
+  }
+  state.second = match; $('#search-status2').textContent = 'Second reference selected.';
+}
+
 $('#search-form').addEventListener('submit', async event => {
   event.preventDefault();
   const requestId = ++operation;
@@ -54,11 +70,7 @@ $('#search-form').addEventListener('submit', async event => {
     if (requestId !== operation) return;
     if (!data.matches?.length) { searchStatus.textContent = 'No matches found. Try another spelling or reference.'; return; }
     searchStatus.textContent = 'Choose the correct match:';
-    renderMatches(matches, data.matches, match => {
-      state.selected = match; state.second = null;
-      $('#matches2').replaceChildren(); $('#search-status2').textContent = '';
-      selection.hidden = false; searchStatus.textContent = 'First reference selected.';
-    });
+    renderMatches(matches, data.matches, choosePrimary);
   } catch (error) { if (requestId === operation) searchStatus.textContent = error.message; }
   finally { $('#search-button').disabled = false; }
 });
@@ -85,13 +97,7 @@ async function searchSecond() {
     if (requestId !== operation) return;
     if (!data.matches?.length) { $('#search-status2').textContent = 'No matches found. Try another spelling or reference.'; return; }
     $('#search-status2').textContent = 'Choose the correct second match:';
-    renderMatches($('#matches2'), data.matches, match => {
-      if (match.id.toLowerCase() === state.selected.id.toLowerCase()) {
-        state.second = null; $('#matches2').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', 'false'));
-        $('#search-status2').textContent = 'Choose a different artist for the second reference.'; return;
-      }
-      state.second = match; $('#search-status2').textContent = 'Second reference selected.';
-    });
+    renderMatches($('#matches2'), data.matches, chooseSecond);
   } catch (error) { if (requestId === operation) $('#search-status2').textContent = error.message; }
   finally { $('#search2').disabled = false; }
 }
@@ -106,7 +112,7 @@ $('#goal').addEventListener('change', () => {
   operation++; invalidateBrief(); searchStatus.textContent = 'Build the brief again to apply the new goal.';
 });
 
-function renderItems(container, items, category, provenance, emptyText) {
+function renderItems(container, items, category, provenance, emptyText, scope = 'single') {
   container.replaceChildren();
   if (!items.length) {
     const p = document.createElement('p'); p.className = 'empty'; p.textContent = emptyText || 'No ' + category + ' returned in this sample.'; container.append(p); return;
@@ -123,7 +129,7 @@ function renderItems(container, items, category, provenance, emptyText) {
     add.setAttribute('aria-label', 'Add ' + item.name + ' to brief'); add.setAttribute('aria-pressed', 'false');
     add.addEventListener('click', () => {
       if (state.shortlist.has(key)) state.shortlist.delete(key);
-      else state.shortlist.set(key, { ...item, category, provenance });
+      else state.shortlist.set(key, { ...item, category, provenance, scope });
       updateShortlist();
     });
     add.dataset.entity = key; add.dataset.name = item.name; row.append(number, content, add); container.append(row);
@@ -144,12 +150,12 @@ function renderBridge(data) {
     : 'No shared entities were found in these returned samples. Try another pair to explore further.';
   $('#trace-description').textContent = describeExploration(data);
   $('#source-a-name').textContent = a; $('#source-b-name').textContent = b;
-  renderItems($('#common-artists'), data.artists.common, 'artists', 'Returned for both ' + a + ' and ' + b, 'No common artists in the returned samples.');
-  renderItems($('#common-films'), data.films.common, 'films', 'Returned for both ' + a + ' and ' + b, 'No common films in the returned samples.');
-  renderItems($('#only-a-artists'), data.artists.onlyA, 'artists', 'Returned for ' + a, 'No additional artists in this sample.');
-  renderItems($('#only-a-films'), data.films.onlyA, 'films', 'Returned for ' + a, 'No additional films in this sample.');
-  renderItems($('#only-b-artists'), data.artists.onlyB, 'artists', 'Returned for ' + b, 'No additional artists in this sample.');
-  renderItems($('#only-b-films'), data.films.onlyB, 'films', 'Returned for ' + b, 'No additional films in this sample.');
+  renderItems($('#common-artists'), data.artists.common, 'artists', 'Returned for both ' + a + ' and ' + b, 'No common artists in the returned samples.', 'common');
+  renderItems($('#common-films'), data.films.common, 'films', 'Returned for both ' + a + ' and ' + b, 'No common films in the returned samples.', 'common');
+  renderItems($('#only-a-artists'), data.artists.onlyA, 'artists', 'Returned for ' + a, 'No additional artists in this sample.', 'onlyA');
+  renderItems($('#only-a-films'), data.films.onlyA, 'films', 'Returned for ' + a, 'No additional films in this sample.', 'onlyA');
+  renderItems($('#only-b-artists'), data.artists.onlyB, 'artists', 'Returned for ' + b, 'No additional artists in this sample.', 'onlyB');
+  renderItems($('#only-b-films'), data.films.onlyB, 'films', 'Returned for ' + b, 'No additional films in this sample.', 'onlyB');
   $('#single-view').hidden = true; $('#bridge-view').hidden = false;
 }
 
@@ -158,9 +164,11 @@ function describeExploration(data) {
   const [a, b] = data.references;
   if (!extra || extra.status === 'not_needed') return 'The tool checked music and film results for each artist and found shared entities. No additional search was needed.';
   if (extra.status === 'no_candidate') return 'The initial samples had no shared entities and returned no additional first-reference artist to explore.';
-  if (extra.status === 'unavailable') return 'The initial samples had no shared entities. An additional lookup for ' + extra.anchor + ', returned for ' + a + ', could not be completed. The initial comparison remains available.';
-  if (extra.status === 'not_found') return 'The initial samples had no shared entities. The tool checked one additional artist, ' + extra.anchor + ', returned for ' + a + ', but found no shared artist with ' + b + ' in those limited samples.';
-  return 'The initial samples had no shared entities. Qloo returned ' + extra.anchor + ' for ' + a + '; in turn, the returned artist samples for ' + extra.anchor + ' and ' + b + ' both include ' + extra.matches.map(x => x.name).join(', ') + '. This is a research path, not evidence of a personal relationship.';
+  const attempts = extra.attempts || [extra];
+  const checked = attempts.filter(item => item.status !== 'unavailable').map(item => item.anchor).join(', ');
+  if (extra.status === 'unavailable') return 'The initial samples had no shared entities. ' + (checked ? 'The tool checked ' + checked + '. ' : '') + 'An additional lookup for ' + extra.anchor + ', returned for ' + a + ', could not be completed. The initial comparison remains available.';
+  if (extra.status === 'not_found') return 'The initial samples had no shared entities. The tool checked ' + checked + ', returned for ' + a + ', but found no shared artist with ' + b + ' in those limited samples.';
+  return 'The initial samples had no shared entities. ' + (attempts.length > 1 ? 'After checking ' + attempts[0].anchor + ', the tool explored ' : 'The tool explored ') + extra.anchor + ', returned for ' + a + '. Qloo’s returned artist samples for ' + extra.anchor + ' and ' + b + ' both include ' + extra.matches.map(x => x.name).join(', ') + '. This is a research path, not evidence of a personal relationship.';
 }
 
 function renderSingle(data) {
@@ -170,7 +178,7 @@ function renderSingle(data) {
   $('#single-view').hidden = false; $('#bridge-view').hidden = true;
 }
 
-$('#build').addEventListener('click', async () => {
+async function buildResearchBrief() {
   if (!state.selected) return;
   const isBridge = $('#bridge-toggle').checked;
   if (isBridge && !state.second) { $('#search-status2').textContent = 'Search and select a different second artist, or turn off comparison.'; $('#artist2').focus(); return; }
@@ -190,6 +198,34 @@ $('#build').addEventListener('click', async () => {
     results.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
   } catch (error) { if (requestId === operation) searchStatus.textContent = error.message; }
   finally { button.disabled = false; }
+}
+$('#build').addEventListener('click', buildResearchBrief);
+
+$('#try-example').addEventListener('click', async () => {
+  const requestId = ++operation;
+  const button = $('#try-example'); button.disabled = true;
+  state.selected = null; state.second = null; invalidateBrief();
+  matches.replaceChildren(); $('#matches2').replaceChildren(); selection.hidden = true;
+  searchStatus.textContent = 'Finding the two example artists in Qloo…';
+  try {
+    const [firstData, secondData] = await Promise.all([
+      request('/api/search', { name: 'Cesária Évora' }), request('/api/search', { name: 'Ibrahim Ferrer' }),
+    ]);
+    if (requestId !== operation) return;
+    const first = findExactArtist(firstData.matches, 'Cesária Évora');
+    const second = findExactArtist(secondData.matches, 'Ibrahim Ferrer');
+    if (!first || !second || first.id.toLowerCase() === second.id.toLowerCase()) {
+      searchStatus.textContent = 'The example identities could not be verified. Search and select artists manually.'; return;
+    }
+    state.selected = first; state.second = second;
+    $('#artist').value = first.name; $('#artist2').value = second.name;
+    $('#bridge-toggle').checked = true; $('#bridge-box').hidden = false; $('#goal').value = 'showcase'; selection.hidden = false;
+    renderMatches(matches, firstData.matches, choosePrimary, first.id);
+    renderMatches($('#matches2'), secondData.matches, chooseSecond, second.id);
+    $('#search-status2').textContent = 'Second reference selected.';
+    await buildResearchBrief();
+  } catch (error) { if (requestId === operation) searchStatus.textContent = error.message; }
+  finally { button.disabled = false; }
 });
 
 function updateShortlist() {
@@ -200,7 +236,11 @@ function updateShortlist() {
     const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
     remove.setAttribute('aria-label', 'Remove ' + item.name + ' from brief');
     remove.addEventListener('click', () => { state.shortlist.delete(key); updateShortlist(); });
-    li.append(label, remove); list.append(li);
+    const search = document.createElement('a'); search.href = communitySearchUrl(item.name); search.target = '_blank'; search.rel = 'noopener noreferrer';
+    search.textContent = 'Search Community'; search.className = 'community-search';
+    search.setAttribute('aria-label', 'Search DUA Community for ' + item.name);
+    const controls = document.createElement('div'); controls.className = 'shortlist-controls'; controls.append(search, remove);
+    li.append(label, controls); list.append(li);
   }
   $('#shortlist-count').textContent = state.shortlist.size ? state.shortlist.size + (state.shortlist.size === 1 ? ' reference selected for your brief.' : ' references selected for your brief.') : 'No references selected yet. Use + beside any result.';
   for (const button of document.querySelectorAll('[data-entity]')) {
@@ -209,6 +249,8 @@ function updateShortlist() {
     button.setAttribute('aria-label', (selected ? 'Remove ' : 'Add ') + button.dataset.name + (selected ? ' from brief' : ' to brief'));
   }
   $('#copy-status').textContent = '';
+  const outline = $('#creative-outline'); outline.replaceChildren();
+  for (const line of createOutline(state.brief, state.mode, [...state.shortlist.values()])) { const li = document.createElement('li'); li.textContent = line; outline.append(li); }
 }
 
 function briefText() {
@@ -224,7 +266,7 @@ function briefText() {
   } else {
     lines.push('## Qloo music references', ...b.artists.map(x => '- ' + x.name), '', '## Qloo film references', ...b.films.map(x => '- ' + x.name), '', '## Research method and limits', b.source);
   }
-  lines.push('', '## Human review checklist', ...b.actions.map(x => '- ' + x), '', 'These are cultural research references, not confirmed collaborations, available performers, audience demand or rights clearances.', 'Tool: https://dua-cultural-signals-qloo.vercel.app');
+  lines.push('', '## Working outline', ...createOutline(b, state.mode, selected).map(x => '- ' + x), '', '## Human review checklist', ...b.actions.map(x => '- ' + x), '', 'These are cultural research references, not confirmed collaborations, available performers, audience demand or rights clearances.', 'Tool: https://dua-cultural-signals-qloo.vercel.app');
   return lines.join('\n');
 }
 $('#copy').addEventListener('click', async () => {

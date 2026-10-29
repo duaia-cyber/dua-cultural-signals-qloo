@@ -27,4 +27,11 @@ Objective: help a cultural programmer compare two verified artist references and
 
 ### Bounded adaptive exploration
 
-If the first artist and film samples contain no shared entity, automatically explore one artist from the first sample and check whether its returned artist sample intersects the second artist's sample. Explain all steps, keep a strict limit of one extra Qloo request, show no-route and unavailable states, and never infer a personal relationship or an audience metric. This is a deterministic research tool; do not claim an autonomous LLM or guarantee contest qualification.
+If the first artist and film samples contain no shared entity, automatically explore up to two artists from the first sample and check whether their returned artist samples intersect the second artist's sample. Stop as soon as a path is found or a provider fails. Explain every step, keep a strict limit of two extra Qloo requests, show no-route and unavailable states, and never infer a personal relationship or an audience metric. This is a deterministic research tool; do not claim an autonomous LLM or guarantee contest qualification.
+
+### Ease of use and community handoff
+
+Add an optional one-click live example that resolves real artist identities through Qloo and never substitutes fixtures. Offer an explicit user-initiated community search for a selected public reference name, without matching identities or transferring project notes. Verify that DUA's real people-search route accepts the query and handles empty results. Produce an editable, traceable brief with a useful outline and clear limits.
+## Agent tool integration
+
+Expose the existing verified search and comparison as a read-only MCP stdio tool, so an agent can discover and call it using the live demo without receiving the Qloo secret. Keep the public demo as the source of results, validate inputs, handle provider errors and verify the protocol and tool calls with local fixtures and a real read-only request. Do not claim an autonomous language-model agent or a DUA production integration.
