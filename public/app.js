@@ -238,6 +238,10 @@ function updateShortlist() {
     button.setAttribute('aria-pressed', String(selected)); button.textContent = selected ? '✓' : '+';
     button.setAttribute('aria-label', (selected ? 'Remove ' : 'Add ') + button.dataset.name + (selected ? ' from brief' : ' to brief'));
   }
+  const count = state.shortlist.size;
+  $('#dock-count').textContent = count ? count + (count === 1 ? ' reference selected' : ' references selected') : 'Choose your references';
+  $('#dock-hint').textContent = count ? 'Add your context, review the plan and export your PDF.' : 'Use + to keep the ideas you want to explore.';
+  $('#review-brief').disabled = !count;
   $('#copy-status').textContent = '';
   const outline = $('#creative-outline'); outline.replaceChildren();
   for (const line of createOutline(state.brief, state.mode, [...state.shortlist.values()])) { const li = document.createElement('li'); li.textContent = line; outline.append(li); }
@@ -276,3 +280,9 @@ for (const portrait of document.querySelectorAll('.artist-preview img')) {
   portrait.addEventListener('error', hideUnavailable);
   if (portrait.complete && !portrait.naturalWidth) hideUnavailable();
 }
+
+$('#review-brief').addEventListener('click', () => {
+  const brief = $('#project-brief');
+  brief.focus({ preventScroll: true });
+  brief.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+});
