@@ -163,6 +163,10 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14
 .bridge-summary h3,.source-intro h3 {margin:0;font-size:clamp(24px,2.5vw,34px);line-height:1.1;letter-spacing:-.045em;}
 .bridge-summary p:not(.eyebrow) {margin:0 0 10px;color:#263a69;font-size:14px;line-height:1.6;}
 .bridge-summary p.bridge-limit {margin:12px 0 0;color:#52617d;font-size:12px;}
+.research-trace {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;margin:0 0 24px;padding:4px 8px 18px;border-bottom:1px solid #d5d4cd;}
+.research-trace .eyebrow {margin:0 0 9px;color:#68686b;}
+.research-trace h3 {margin:0;font-size:19px;letter-spacing:-.03em;}
+.research-trace p:not(.eyebrow) {margin:0;color:#575a65;font-size:12px;line-height:1.65;}
 .shared-grid {margin-bottom:34px;}
 .source-intro {margin:0 0 20px;}
 .source-intro .eyebrow {margin-bottom:10px;color:#68686b;}
@@ -188,5 +192,5 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14
 .brief textarea {display:block;width:100%;min-height:82px;margin-top:9px;padding:12px 14px;border:1px solid #494c55;border-radius:13px;background:#191a1e;color:#fff;font:inherit;font-size:13px;line-height:1.5;resize:vertical;}
 .brief textarea::placeholder {color:#a7a9b1;opacity:1;}
 .brief .note-help {max-width:320px;color:#aaadb7;font-size:11px;line-height:1.5;}
-@media(max-width:800px){.bridge-summary{grid-template-columns:minmax(0,1fr);gap:14px;padding:22px;}.ecosystem{display:block;margin:0 20px 40px;padding:24px;}.ecosystem-links{margin-top:20px;}.community-next{display:block;}.community-next a{margin-top:18px;}}
+@media(max-width:800px){.bridge-summary,.research-trace{grid-template-columns:minmax(0,1fr);gap:14px;}.bridge-summary{padding:22px;}.ecosystem{display:block;margin:0 20px 40px;padding:24px;}.ecosystem-links{margin-top:20px;}.community-next{display:block;}.community-next a{margin-top:18px;}}
 @media(max-width:430px){.bridge-summary{padding:18px;}.column-title{font-size:9px;}.panel label.bridge-toggle{padding:12px;}.ecosystem{margin:0 12px 30px;}}

@@ -5,20 +5,63 @@
     "version": "1.0.0",
     "description": "A bounded, human-guided cultural research tool. Search and verify artist identities before comparing Qloo's limited results. Never infer audience overlap, availability, or consent from these signals. Send public artist names only; do not submit personal or sensitive data."
   },
-  "servers": [{ "url": "https://dua-cultural-signals-qloo.vercel.app" }],
+  "servers": [
+    {
+      "url": "https://dua-cultural-signals-qloo.vercel.app"
+    }
+  ],
   "paths": {
     "/api/search": {
       "get": {
         "operationId": "searchArtistReference",
         "summary": "Find candidate artist identities",
         "description": "The caller or human must select the correct identity before requesting a comparison. Returns up to five Qloo matches.",
-        "parameters": [{ "name": "name", "in": "query", "required": true, "schema": { "type": "string", "minLength": 2, "maxLength": 100 } }],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100
+            }
+          }
+        ],
         "responses": {
-          "200": { "description": "Candidate matches", "content": { "application/json": { "schema": { "type": "object", "required": ["matches"], "properties": { "matches": { "type": "array", "items": { "$ref": "#/components/schemas/Entity" } } } } } } },
-          "400": { "description": "Invalid name" },
-          "429": { "description": "Rate limit reached" },
-          "502": { "description": "Provider unavailable" },
-          "503": { "description": "Service not configured" }
+          "200": {
+            "description": "Candidate matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "matches"
+                  ],
+                  "properties": {
+                    "matches": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Entity"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid name"
+          },
+          "429": {
+            "description": "Rate limit reached"
+          },
+          "502": {
+            "description": "Provider unavailable"
+          },
+          "503": {
+            "description": "Service not configured"
+          }
         }
       }
     },
@@ -26,30 +69,254 @@
       "get": {
         "operationId": "compareCulturalReferences",
         "summary": "Compare Qloo references for two verified artists",
-        "description": "Fetches up to six artist and six film results per artist. 'common' means the same Qloo entity ID occurred in both returned samples; 'onlyA' and 'onlyB' indicate presence in one returned sample, not proof of no relationship. 'direct' lists when one input artist occurred in the other artist's returned artist sample. Names, IDs and results are not evidence of available performers, shared audiences, endorsement or rights. Output is deterministic and makes no autonomous decisions.",
+        "description": "Fetches up to six artist and six film results per artist. 'common' means the same Qloo entity ID occurred in both returned samples; 'onlyA' and 'onlyB' indicate presence in one returned sample, not proof of no relationship. 'direct' lists when one input artist occurred in the other artist's returned artist sample. Names, IDs and results are not evidence of available performers, shared audiences, endorsement or rights. Output is deterministic and makes no autonomous decisions. If there is no shared entity in the initial artist and film samples, the tool automatically checks up to six results for one additional artist from the first sample. It reports the candidate and matches or an explicit no-match/unavailable outcome. This bounded exploratory route is not proof of relationships or audience overlap.",
         "parameters": [
-          { "name": "nameA", "in": "query", "required": true, "schema": { "type": "string", "minLength": 2, "maxLength": 100 } },
-          { "name": "idA", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "nameB", "in": "query", "required": true, "schema": { "type": "string", "minLength": 2, "maxLength": 100 } },
-          { "name": "idB", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "goal", "in": "query", "required": true, "schema": { "type": "string", "enum": ["showcase", "collaboration", "campaign"] } }
+          {
+            "name": "nameA",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "idA",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "nameB",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "idB",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "goal",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "showcase",
+                "collaboration",
+                "campaign"
+              ]
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Traceable comparison", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Bridge" } } } },
-          "400": { "description": "Invalid, identical or unverified references, or invalid goal" },
-          "429": { "description": "Rate limit reached" },
-          "502": { "description": "Provider unavailable; no partial comparison returned" },
-          "503": { "description": "Service not configured" }
+          "200": {
+            "description": "Traceable comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bridge"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, identical or unverified references, or invalid goal"
+          },
+          "429": {
+            "description": "Rate limit reached"
+          },
+          "502": {
+            "description": "Provider unavailable; no partial comparison returned"
+          },
+          "503": {
+            "description": "Service not configured"
+          }
         }
       }
     }
   },
   "components": {
     "schemas": {
-      "Entity": { "type": "object", "required": ["id", "name"], "properties": { "id": { "type": "string", "format": "uuid" }, "name": { "type": "string" }, "disambiguation": { "type": "string" }, "subtype": { "type": "string" }, "tags": { "type": "array", "items": { "type": "string" } } } },
-      "DirectSignal": { "type": "object", "required": ["from", "to", "rank"], "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "rank": { "type": "integer", "minimum": 1, "description": "Position in the retained results after removing the source artist, not an affinity score." } } },
-      "Comparison": { "type": "object", "required": ["common", "onlyA", "onlyB", "direct", "sampleA", "sampleB"], "properties": { "common": { "type": "array", "items": { "$ref": "#/components/schemas/Entity" } }, "onlyA": { "type": "array", "items": { "$ref": "#/components/schemas/Entity" } }, "onlyB": { "type": "array", "items": { "$ref": "#/components/schemas/Entity" } }, "direct": { "type": "array", "items": { "$ref": "#/components/schemas/DirectSignal" } }, "sampleA": { "type": "integer" }, "sampleB": { "type": "integer" } } },
-      "Bridge": { "type": "object", "required": ["references", "goal", "artists", "films", "actions", "method"], "properties": { "references": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 2 }, "goal": { "type": "string" }, "artists": { "$ref": "#/components/schemas/Comparison" }, "films": { "$ref": "#/components/schemas/Comparison" }, "actions": { "type": "array", "items": { "type": "string" } }, "method": { "type": "string" } } }
+      "Entity": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "disambiguation": {
+            "type": "string"
+          },
+          "subtype": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DirectSignal": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "rank"
+        ],
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Position in the retained results after removing the source artist, not an affinity score."
+          }
+        }
+      },
+      "Comparison": {
+        "type": "object",
+        "required": [
+          "common",
+          "onlyA",
+          "onlyB",
+          "direct",
+          "sampleA",
+          "sampleB"
+        ],
+        "properties": {
+          "common": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entity"
+            }
+          },
+          "onlyA": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entity"
+            }
+          },
+          "onlyB": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entity"
+            }
+          },
+          "direct": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectSignal"
+            }
+          },
+          "sampleA": {
+            "type": "integer"
+          },
+          "sampleB": {
+            "type": "integer"
+          }
+        }
+      },
+      "Bridge": {
+        "type": "object",
+        "required": [
+          "references",
+          "goal",
+          "artists",
+          "films",
+          "actions",
+          "method",
+          "exploration"
+        ],
+        "properties": {
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "goal": {
+            "type": "string"
+          },
+          "artists": {
+            "$ref": "#/components/schemas/Comparison"
+          },
+          "films": {
+            "$ref": "#/components/schemas/Comparison"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "method": {
+            "type": "string"
+          },
+          "exploration": {
+            "$ref": "#/components/schemas/Exploration"
+          }
+        }
+      },
+      "Exploration": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "not_found",
+              "unavailable",
+              "no_candidate",
+              "not_needed"
+            ]
+          },
+          "anchor": {
+            "type": "string"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entity"
+            }
+          },
+          "sampleSize": {
+            "type": "integer"
+          }
+        }
+      }
     }
   }
 }

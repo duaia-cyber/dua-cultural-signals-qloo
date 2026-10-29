@@ -24,3 +24,7 @@ Objective: help a cultural programmer compare two verified artist references and
 - Let users curate either type of result and export provenance in the brief. Keep review and rights checks human-led. Show appropriate empty and loading states.
 - Link clearly to the real public DUA ecosystem and distinguish the open-source competition prototype from any future product integration. Do not connect user accounts, send private DUA data to Qloo, or put the hackathon credential in the production platform.
 - Update the draft narrative and public source to match what has actually been deployed. Verify isolated tests, local UI including mobile and actual Qloo results before publishing; keep Devpost in draft pending explicit submission instruction.
+
+### Bounded adaptive exploration
+
+If the first artist and film samples contain no shared entity, automatically explore one artist from the first sample and check whether its returned artist sample intersects the second artist's sample. Explain all steps, keep a strict limit of one extra Qloo request, show no-route and unavailable states, and never infer a personal relationship or an audience metric. This is a deterministic research tool; do not claim an autonomous LLM or guarantee contest qualification.

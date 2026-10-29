@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildBridge } from '../lib/bridge.mjs';
+import { buildBridge, exploreOneRoute } from '../lib/bridge.mjs';
 import { createHandler } from '../lib/handler.mjs';
 
 const A = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Artist A' };
@@ -62,4 +62,44 @@ test('provider failures do not produce a partially fabricated bridge', async () 
   const response = await call(createHandler({ client }), params);
   assert.equal(response.status, 500);
   assert.equal(response.body.artists, undefined);
+});
+
+test('adaptive research checks one returned artist and reports the verified path', async () => {
+  const calls = [];
+  const client = {
+    search: async name => name === A.name ? [A] : [B],
+    insights: async (id, domain) => {
+      calls.push([id, domain]);
+      if (domain === 'films') return [];
+      if (id === A.id) return [uniqueA];
+      if (id === B.id) return [uniqueB];
+      if (id === uniqueA.id) return [uniqueB, A];
+      throw new Error('unexpected call');
+    },
+  };
+  const response = await call(createHandler({ client }), params);
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 5);
+  assert.deepEqual(response.body.exploration, { status: 'found', anchor: uniqueA.name, matches: [uniqueB], sampleSize: 2 });
+});
+
+test('adaptive research reports a limited no-match result without fabricating a path', () => {
+  const result = exploreOneRoute(A, B, uniqueA, [shared, A], [uniqueB]);
+  assert.deepEqual(result, { status: 'not_found', anchor: uniqueA.name, matches: [], sampleSize: 2 });
+});
+
+test('failed optional research is marked unavailable while verified initial results remain', async () => {
+  const client = {
+    search: async name => name === A.name ? [A] : [B],
+    insights: async (id, domain) => {
+      if (id === uniqueA.id) throw new Error('provider unavailable');
+      if (domain === 'films') return [];
+      return id === A.id ? [uniqueA] : [uniqueB];
+    },
+  };
+  const response = await call(createHandler({ client }), params);
+  assert.equal(response.status, 200);
+  assert.equal(response.body.exploration.status, 'unavailable');
+  assert.equal(response.body.exploration.anchor, uniqueA.name);
+  assert.equal(response.body.artists.onlyA[0].name, uniqueA.name);
 });

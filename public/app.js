@@ -142,6 +142,7 @@ function renderBridge(data) {
   $('#bridge-common-status').textContent = count
     ? count + (count === 1 ? ' entity appears in both returned samples.' : ' entities appear in both returned samples.')
     : 'No shared entities were found in these returned samples. Try another pair to explore further.';
+  $('#trace-description').textContent = describeExploration(data);
   $('#source-a-name').textContent = a; $('#source-b-name').textContent = b;
   renderItems($('#common-artists'), data.artists.common, 'artists', 'Returned for both ' + a + ' and ' + b, 'No common artists in the returned samples.');
   renderItems($('#common-films'), data.films.common, 'films', 'Returned for both ' + a + ' and ' + b, 'No common films in the returned samples.');
@@ -150,6 +151,16 @@ function renderBridge(data) {
   renderItems($('#only-b-artists'), data.artists.onlyB, 'artists', 'Returned for ' + b, 'No additional artists in this sample.');
   renderItems($('#only-b-films'), data.films.onlyB, 'films', 'Returned for ' + b, 'No additional films in this sample.');
   $('#single-view').hidden = true; $('#bridge-view').hidden = false;
+}
+
+function describeExploration(data) {
+  const extra = data.exploration;
+  const [a, b] = data.references;
+  if (!extra || extra.status === 'not_needed') return 'The tool checked music and film results for each artist and found shared entities. No additional search was needed.';
+  if (extra.status === 'no_candidate') return 'The initial samples had no shared entities and returned no additional first-reference artist to explore.';
+  if (extra.status === 'unavailable') return 'The initial samples had no shared entities. An additional lookup for ' + extra.anchor + ', returned for ' + a + ', could not be completed. The initial comparison remains available.';
+  if (extra.status === 'not_found') return 'The initial samples had no shared entities. The tool checked one additional artist, ' + extra.anchor + ', returned for ' + a + ', but found no shared artist with ' + b + ' in those limited samples.';
+  return 'The initial samples had no shared entities. Qloo returned ' + extra.anchor + ' for ' + a + '; in turn, the returned artist samples for ' + extra.anchor + ' and ' + b + ' both include ' + extra.matches.map(x => x.name).join(', ') + '. This is a research path, not evidence of a personal relationship.';
 }
 
 function renderSingle(data) {
@@ -209,6 +220,7 @@ function briefText() {
     lines.push('## Direct connections within returned artist samples', ...(b.artists.direct.length ? b.artists.direct.map(x => '- Qloo’s results for ' + x.from + ' include ' + x.to + '.') : ['No direct reference appeared in the returned samples.']), '', '## Shared references', ...(['artists', 'films'].flatMap(category => b[category].common.map(item => '- ' + item.name + ' (' + category + '; returned for both references)'))));
     if (!b.artists.common.length && !b.films.common.length) lines.push('No shared entities in these returned samples.');
     lines.push('', '## Research method and limits', b.method, 'Source-specific items appear only in the returned sample for that source. Absence does not mean no relationship exists.');
+    lines.push('', '## Additional research step', describeExploration(b));
   } else {
     lines.push('## Qloo music references', ...b.artists.map(x => '- ' + x.name), '', '## Qloo film references', ...b.films.map(x => '- ' + x.name), '', '## Research method and limits', b.source);
   }
